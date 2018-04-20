@@ -1,6 +1,10 @@
 # opbadges
 
-> Nuxt.js project
+> Platform for displaying and distributing open badges
+
+## Requirements
++ Node.js v8+
++ MariaDB
 
 ## Build Setup
 
@@ -20,4 +24,3 @@ For detailed explanation on how things work, checkout the [Nuxt.js docs](https:/
 ## Backpack
 
 We use [backpack](https://github.com/palmerhq/backpack) to watch and build the application, so you can use the latest ES6 features (module syntax, async/await, etc.).
-# ezpaarse-badge
