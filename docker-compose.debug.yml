@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  db:
+    container_name: opbadges_db
+    image: mariadb
+    restart: always
+    ports: 
+      - 3306:3306
+    environment:
+      MYSQL_USER: root
+      MYSQL_DATABASE: openbadges
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_PASSWORD: toor
+
+  adminer:
+    container_name: opbadges_adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8000:8080
+    links: 
+      - db
+
+  opbadges:
+    container_name: opbadges
+    image: node:8.5.0-wheezy
+    ports:
+      - 3000:3000
+    volumes:
+      - "./:/usr/src/app"
+    working_dir: /usr/src/app
+    command: npm run dev
+    restart: "no"
+    links:
+      - db
+      
