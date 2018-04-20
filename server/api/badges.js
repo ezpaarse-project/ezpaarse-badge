@@ -37,11 +37,6 @@ router.get('/badges/:uuid', (req, res, next) => {
   res.json({ badges: null })
 })
 
-// Display badge's criteria by uuid
-router.get('/badges/:uuid/criteria', (req, res, next) => {
-  res.json({ badges: null })
-})
-
 // Issue badge
 router.get('/badges/:uuid/emit', (req, res, next) => {
   res.json({ badges: null })
@@ -58,7 +53,7 @@ router.get('/badges/:uuid/accept', (req, res, next) => {
 })
 
 // Refuse badge
-router.get('/badges/:uuid/refusexœ', (req, res, next) => {
+router.get('/badges/:uuid/refuse', (req, res, next) => {
   res.json({ badges: null })
 })
 

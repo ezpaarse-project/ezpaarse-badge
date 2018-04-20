@@ -1,6 +1,10 @@
 import Vuex from 'vuex'
+import badges from './badges'
 
 const store = () => new Vuex.Store({
+  modules: [
+    badges
+  ],
   state: {
     drawer: true
   },

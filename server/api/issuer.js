@@ -2,15 +2,12 @@ import { Router } from 'express'
 
 const router = Router()
 
-// Mock Users
-const issuers = [
-  { name: 'Alexandre' },
-  { name: 'Pooya' },
-  { name: 'Sébastien' }
-]
-
 router.get('/issuer', (req, res, next) => {
-  res.json(issuers)
+  res.json({ issuer: null })
+})
+
+router.get('/issuer/edit', (req, res, next) => {
+  res.json({ issuer: null })
 })
 
 export default router
