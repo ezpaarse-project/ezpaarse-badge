@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer fixed clipped  app v-model="drawer">
+    <v-navigation-drawer fixed clipped app v-model="drawer">
       <v-toolbar flat class="transparent">
         <v-list dense class="pt-0">
 

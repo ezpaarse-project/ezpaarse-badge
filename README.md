@@ -1,10 +1,23 @@
-# opbadges
+# OpenBadges
 
 > Platform for displaying and distributing open badges
 
 ## Requirements
 + Node.js v8+
 + MariaDB
+
+## Configuration
+Before running anything, update config file ``config/production.json`` to set your database credentials.
+
+## Docker
+```bash
+
+```
+
+## Database
+```bash
+$ knex migrate:latest
+```
 
 ## Build Setup
 

@@ -24,7 +24,7 @@ services:
 
   opbadges:
     container_name: opbadges
-    image: node:8.5.0-wheezy
+    image: node:9.1.0-wheezy
     ports:
       - 3000:3000
     volumes:

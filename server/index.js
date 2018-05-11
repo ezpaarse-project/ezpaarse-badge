@@ -2,6 +2,7 @@ import express from 'express'
 import { Nuxt, Builder } from 'nuxt'
 
 import api from './api'
+import obf from './obf'
 
 import cfg from 'config'
 import config from '../nuxt.config.js'
@@ -16,6 +17,7 @@ app.set('port', port)
 
 // Import API Routes
 app.use('/api', api)
+app.use('/obf', obf)
 
 // Import and Set Nuxt.js options
 config.dev = !(process.env.NODE_ENV === 'production')

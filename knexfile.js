@@ -1,4 +1,6 @@
-import config from 'config'
+/* eslint-disable */
+
+const config = require('config')
 
 const knex = {}
 
@@ -11,4 +13,4 @@ knex.connection = {
   database: config.maria.database || 'openbadges'
 }
 
-export default knex
+module.exports = knex
