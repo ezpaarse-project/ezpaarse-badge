@@ -1,5 +1,9 @@
 # dependencies
 node_modules
+bin/node_modules
+
+# certs
+bin/certs
 
 # logs
 npm-debug.log
