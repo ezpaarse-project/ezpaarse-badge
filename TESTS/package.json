@@ -1,0 +1,21 @@
+{
+  "name": "openbadges-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "./node_modules/.bin/nodemon ./index.js -e js,html,css,twig",
+    "up": "git add .; git commit -am 'make it better'; git push heroku master",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "node-forge": "^0.7.5",
+    "request": "^2.85.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  }
+}

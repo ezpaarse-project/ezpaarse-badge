@@ -12,6 +12,10 @@ const urlApi = 'https://openbadgefactory.com/v1'
 
 path.basename(path.dirname(fs.realpathSync(__filename)))
 
+if (!fs.existsSync('./certs')){
+  fs.mkdirSync('./certs')
+}
+
 clear()
 
 console.log(
@@ -27,7 +31,7 @@ const run = async () => {
   const res = await inquirer.obf()
   
   request(`${urlApi}/client/OBF.rsa.pub`, (error, response, body) => {
-    if (error) console.log(error)
+    if (error) console.log(chalk.red(error))
 
 		const publicKey = forge.pki.publicKeyFromPem(body)
 		const apiKeyDecoded = forge.util.decode64(res.apiKey)
@@ -35,11 +39,7 @@ const run = async () => {
 		const decrypt = JSON.parse(forge.pki.rsa.decrypt(apiKeyDecoded, publicKey, true))
 
     pem.createCertificate({ days: 1095, selfSigned: true, subject: decrypt.subject }, (err, keys) => {
-      if (err) throw err
-
-      if (!fs.existsSync('./certs')){
-        fs.mkdirSync('./certs')
-      }
+      if (err) console.log(chalk.red(err))
 
       fs.writeFileSync('./certs/obf.csr', keys.csr, { encoding: 'utf8', flag: 'w' })
       fs.writeFileSync('./certs/obf.key', keys.serviceKey, { encoding: 'utf8', flag: 'w' })
@@ -52,11 +52,11 @@ const run = async () => {
           request: fs.readFileSync('./certs/obf.csr').toString()
         }
       }, (error, response, body) => {
-        if (error || body.error) console.log(error || body.error)
+        if (error || body.error) console.log(chalk.red(error || body.error))
 
         if (!body.error) fs.writeFileSync('./certs/certificate.pem', body)
 
-        console.log("Configuration ended")
+        console.log(chalk.yellow("Configuration ended"))
       })
     })
   })
