@@ -1,18 +1,6 @@
 version: '2'
 
 services:
-  db:
-    container_name: opbadges_db
-    image: mariadb
-    restart: on-failure
-    ports: 
-      - 3306:3306
-    environment:
-      MYSQL_USER: root
-      MYSQL_DATABASE: openbadges
-      MYSQL_ROOT_PASSWORD: toor
-      MYSQL_PASSWORD: toor
-
   opbadges:
     container_name: opbadges
     build:
@@ -21,6 +9,4 @@ services:
         - http_proxy
         - https_proxy
     restart: on-failure
-    links:
-      - db
       
