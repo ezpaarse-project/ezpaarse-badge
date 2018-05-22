@@ -32,12 +32,12 @@ $ docker-compose up
     </tr>
     <tr>
       <td>GET /ping</td>
-      <td>Get total issuances by badge</td>
+      <td>Ping OpenBadgeFactory API</td>
       <td></td>
     </tr>
     <tr>
       <td>GET /metrics</td>
-      <td>Give the name and version of the application</td>
+      <td>Get total issuances by badge</td>
       <td></td>
     </tr>
     <tr>
