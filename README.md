@@ -14,3 +14,57 @@ $ npm run conf
 ```
 $ docker-compose up
 ```
+
+## API routes
+<table>
+  <thead>
+    <tr>
+      <th>URL</th>
+      <th>Action</th>
+      <th>Request body</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GET /</td>
+      <td>Give the name and version of the application</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>GET /ping</td>
+      <td>Get total issuances by badge</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>GET /metrics</td>
+      <td>Give the name and version of the application</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>GET /badges</td>
+      <td>Get user's badges</td>
+      <td>JSON
+        <ul>
+          <li><strong>email</strong>: user's email</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>GET /emit</td>
+      <td>Get user's badges</td>
+      <td>JSON
+        <ul>
+          <li>
+            <strong>badgeId</strong>: ID of the badge to be issued</li>
+          <li>
+            <strong>recipient</strong>
+            <ul>
+              <li><strong>email</strong>: recipient email</li>
+              <li><strong>name</strong>: recipient name</li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
