@@ -4,8 +4,10 @@
 
 ## Requirements
 + Node.js v8+
++ OpenSSL
 
-## [WIP] Configuration
+## Configuration
+Generate your **certificate signing request token** in **Admin tools->API key**, past your certificate in **cert.tokens** file and run this command :
 ```
 $ npm run conf
 ```
