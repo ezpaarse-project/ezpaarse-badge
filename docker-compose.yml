@@ -3,6 +3,10 @@ version: '2'
 services:
   opbadges:
     container_name: opbadges
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
     build:
       context: .
       args:

@@ -1,6 +1,15 @@
 {
   "port": 3000,
-
   "urlApi": "https://openbadgefactory.com/v1",
-  "clientId": "P7F99NaEEOa66L"
+  "clientId": "",
+  "email": {
+    "subject": "Vous venez de gagner un badge",
+    "body": "Bonjour, :recipientName, vous venez de recevoir un badge.",
+    "button": "Récupérer mon badge",
+    "footer": "Badge émis par ezPAARSE Project"
+  },
+  "logEntry": {
+    "client": "ezpaarse-badge",
+    "issuer": "ezPAARSE"
+  }
 }
