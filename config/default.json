@@ -6,7 +6,7 @@
 
   "email": {
     "subject": "Vous venez de gagner un badge",
-    "body": "Bonjours, :recipientName, vous venez de recevoir un badge.",
+    "body": "Bonjour, :recipientName, vous venez de recevoir un badge.",
     "button": "Récupérer mon badge",
     "footer": "Badge émis par ezPAARSE Project"
   },
