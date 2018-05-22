@@ -41,16 +41,16 @@ exports.emit = (req, res) => {
   const name = req.body.recipient.name
 
   const errors = []
-  if (badgeId == undefined || badgeId.length <= 0) {
+  if (badgeId == undefined || badgeId.length == 0) {
     errors.push("INVALID_BADGE_ID")
   }
 
   const regexEmail = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-  if (email == undefined || email.length <= 0 || !regexEmail.test(email)) {
+  if (email == undefined || email.length == 0 || !regexEmail.test(email)) {
     errors.push("INVALID_EMAIL_ADDRESS")
   }
 
-  if (name == undefined || name.length <= 0) {
+  if (name == undefined || name.length == 0) {
     errors.push("INVALID_RECIPIENT_NAME")
   }
 

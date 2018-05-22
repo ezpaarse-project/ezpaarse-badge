@@ -7,7 +7,7 @@
   "description": "Nodejs project",
   "main": "index.js",
   "scripts": {
-    "sytart": "node index.js",
+    "start": "node index.js",
     "conf": "node bin/index.js",
     "dev": "./node_modules/.bin/nodemon ./index.js -e js,json",
     "up": "git add .; git commit -am 'make it better'; git push heroku master",
