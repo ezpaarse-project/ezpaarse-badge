@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+# certs
+ssl
+
 # logs
 npm-debug.log
 

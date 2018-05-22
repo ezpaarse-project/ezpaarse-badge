@@ -1,44 +1,36 @@
 {
-  "name": "opbadges",
+  "name": "ezpaarse-badge",
   "version": "1.0.0",
-  "description": "Nuxt.js project",
-  "author": "Steven WILMOUTH <wilmouthsteven@gmail.com>",
-  "private": true,
   "engines": {
-    "node": ">=8.0.0"
+    "node": "9.11.0"
   },
+  "description": "Nodejs project",
+  "main": "index.js",
   "scripts": {
-    "dev": "backpack dev",
-    "build": "nuxt build && backpack build",
-    "test": "mocha",
-    "start": "cross-env NODE_ENV=production node build/main.js",
-    "precommit": "npm run lint",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+    "sytart": "node index.js",
+    "conf": "node bin/index.js",
+    "dev": "./node_modules/.bin/nodemon ./index.js -e js,json",
+    "up": "git add .; git commit -am 'make it better'; git push heroku master",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "axios": "^0.16.2",
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.1",
+    "clear": "^0.1.0",
     "config": "^1.30.0",
-    "cross-env": "^5.0.1",
-    "express": "^4.15.3",
-    "knex": "^0.14.6",
-    "mdi": "^2.2.43",
-    "mysql": "^2.15.0",
-    "nuxt": "^1.0.0-rc3",
-    "source-map-support": "^0.4.15",
-    "vuetify": "^1.0.16"
+    "express": "^4.16.3",
+    "figlet": "^1.2.0",
+    "inquirer": "^5.2.0",
+    "moment": "^2.22.1",
+    "node-forge": "^0.7.5",
+    "pem": "^1.12.5",
+    "request": "^2.85.0",
+    "stream-json": "^0.6.1",
+    "url": "^0.11.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "backpack-core": "^0.4.1",
-    "eslint": "^4.3.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-loader": "^1.9.0",
-    "eslint-plugin-html": "^3.1.1",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "husky": "^0.14.3",
-    "mocha": "^5.1.0"
+    "nodemon": "^1.12.1"
   }
 }

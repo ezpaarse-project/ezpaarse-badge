@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  opbadges:
+    container_name: opbadges
+    build:
+      context: .
+      args:
+        - http_proxy
+        - https_proxy
+    restart: on-failure
+      

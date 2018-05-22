@@ -5,10 +5,6 @@ module.exports = {
     node: true
   },
   extends: 'standard',
-  // required to lint *.vue files
-  plugins: [
-    'html'
-  ],
   // add your custom rules here
   rules: {
     'no-warning-comments': 1,
@@ -20,9 +16,9 @@ module.exports = {
     'no-console': 2, // do not allow console.logs
     'no-multi-spaces': [2, {
     exceptions: {
-      VariableDeclarator: true,
-      ImportDeclaration: true,
-      Property: true
+        VariableDeclarator: true,
+        ImportDeclaration: true,
+        Property: true
       }
     }]
   },
