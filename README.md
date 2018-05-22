@@ -7,7 +7,7 @@
 + OpenSSL
 
 ## Configuration
-Generate your **certificate signing request token** in **Admin tools->API key**, past your certificate in **cert.tokens** file and run this command :
+Generate your **certificate signing request token** in **Admin tools->API key**, past your certificate in **cert.token** file and run this command :
 ```
 $ npm run conf
 ```
