@@ -2,7 +2,7 @@
   "name": "ezpaarse-badge",
   "version": "1.0.0",
   "engines": {
-    "node": "9.11.0"
+    "node": "9.1.0"
   },
   "description": "Nodejs project",
   "main": "index.js",
@@ -10,7 +10,6 @@
     "start": "node index.js",
     "conf": "node bin/index.js",
     "dev": "./node_modules/.bin/nodemon ./index.js -e js,json",
-    "up": "git add .; git commit -am 'make it better'; git push heroku master",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -23,7 +22,6 @@
     "config": "^1.30.0",
     "express": "^4.16.3",
     "figlet": "^1.2.0",
-    "inquirer": "^5.2.0",
     "moment": "^2.22.1",
     "node-forge": "^0.7.5",
     "request": "^2.85.0"
