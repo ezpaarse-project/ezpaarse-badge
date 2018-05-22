@@ -12,7 +12,7 @@
   },
 
   "logEntry": {
-    "client": "app",
-    "issuer": "ezPAARSE-app"
+    "client": "ezpaarse-badge",
+    "issuer": "ezPAARSE"
   }
 }
