@@ -10,22 +10,22 @@ exports.metrics = (req, res) => {
     for (let i = 0; i < badges.length; i++) {
       const badge = JSON.parse(badges[i])
       
-      const issuers = await getBadge(badge.id).then((b) => {
+      const issues = await getBadge(badge.id).then((b) => {
         if (b == null) {
           return 0
         } else {
           const badgeEvents = b.trim().split('\r\n')
 
-          let issuers = 0;
+          let count = 0;
           for (var i = 0; i < badgeEvents.length; i++) {
-            issuers = (issuers + JSON.parse(badgeEvents[i]).recipient.length)
+            count = (count + JSON.parse(badgeEvents[i]).recipient.length)
           }
 
-          return issuers
+          return issues
         }
       })
 
-      metrics[i] = { id: badge.id, name: badge.name, issuers, descr: badge.description, img: badge.image }
+      metrics[i] = { id: badge.id, name: badge.name, issues, descr: badge.description, img: badge.image }
     }
 
     res.json(({ status: 'success', data: metrics }))
