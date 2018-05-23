@@ -4,11 +4,13 @@ services:
   opbadges:
     container_name: opbadges
     image: node:9.1.0-wheezy
+    volumes:
+      - .:/app
+    working_dir: /app
     ports:
       - 3000:3000
-    volumes:
-      - "./:/usr/src/app"
-    working_dir: /usr/src/app
+    environment:
+      - http_proxy
+      - https_proxy
+    tty: true
     command: npm run dev
-    restart: "no"
-      
