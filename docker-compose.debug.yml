@@ -12,5 +12,6 @@ services:
     environment:
       - http_proxy
       - https_proxy
+      - no_proxy
     tty: true
     command: npm run dev
