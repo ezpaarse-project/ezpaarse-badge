@@ -7,7 +7,7 @@
 + OpenSSL
 
 ## Configuration
-Generate your **certificate signing request token** in **Admin tools->API key**, past your certificate in **cert.token** file and run this command :
+Generate your **certificate signing request token** in **Admin tools &rarr; API key**, past your certificate in **cert.token** file and run this command :
 ```
 $ npm run conf
 ```
@@ -16,6 +16,19 @@ $ npm run conf
 ```
 $ docker-compose up
 ```
+
+## Config file
++ port : Application port
++ urlApi : [OpenBadgeFactory API](https://openbadgefactory.com/developers/#open-badge-factory-rest-api)
++ clientId : Your API ID (automatically set during the configuration)
++ email :
+  + subject : Email subject
+  + body : Email content, <strong>:recipientName</strong> var replace by user's email
+  + button : Text displayed on the badge recovery button
+  + footer : Text displayed in email footer
++ logEntry :
+  + client : Name of the badge-issuing application
+  + issuer : Issuer name
 
 ## API routes
 <table>
@@ -45,7 +58,7 @@ $ docker-compose up
     <tr>
       <td>GET /badges</td>
       <td>Get user's badges</td>
-      <td>JSON
+      <td>Query String
         <ul>
           <li><strong>email</strong>: user's email</li>
         </ul>
