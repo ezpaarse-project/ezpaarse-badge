@@ -3,35 +3,28 @@ const moment = require('moment')
 const cfg = require('config')
 
 exports.badges = (req, res) => {
-  api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}` }, async (error, response, body) => {
-    if (error || response.statusCode != 200) res.json({ status: 'error', data: response })
+  api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}&order_by=desc` }, async (error, response, body) => {
+    if (error || response.statusCode != 200) res.json({ status: 'error', data: body })
 
-    const badges = body.trim().split('\r\n')
+    const events = body.trim().split('\r\n').map(v => JSON.parse(v))
 
-    for (let i = 0; i < badges.length; i++) {
-      const badgeId = JSON.parse(badges[i]).badge_id
+    try { 
+      const badgeIds = Array.from(new Set(events.map(v => v.badge_id)))
+      const badges = await getBadges(badgeIds)
 
-      badges[i] = await getBadge(badgeId).then((badge) => {
-        return { 
-          id: badge.id,         	
-          name: badge.name, 
-          descr: badge.description, 
-          img: badge.image, 
-          issued_on: badge.issued_on 
-        }
-      })
+      res.json({ status: 'success', data: badges })
+    } catch(err) {
+      console.log(err)
     }
- 
-    res.json({ status: 'success', data: badges })
   })
 }
 
-getBadge = (badgeId) => {
+function getBadges(badgeIds) {
   return new Promise((resolve, reject) => {
-    api.req({ method: 'GET', url: `/badge/:clientId/${badgeId}` }, (error, response, body) => {
+    api.req({ method: 'GET', url: `/badge/:clientId?id=${badgeIds.join('|')}` }, (error, response, body) => {
       if (error) reject(error)
 
-      resolve(JSON.parse(body))
+      resolve(body.trim().split('\r\n').map(v => JSON.parse(v)))
     })
   })
 }
