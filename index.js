@@ -20,7 +20,7 @@ app.get('/', AppController.app)
 
 app.get('/ping', AppController.ping)
 
-app.post('/badges', BadgeController.badges)
+app.get('/badges', BadgeController.badges)
 app.post('/emit', BadgeController.emit)
 
 app.get('/metrics', ReportController.metrics)

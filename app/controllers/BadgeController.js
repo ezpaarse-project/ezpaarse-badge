@@ -3,8 +3,8 @@ const moment = require('moment')
 const cfg = require('config')
 
 exports.badges = (req, res) => {
-  api.req({ method: 'GET', url: `/event/:clientId?email=${req.body.email}` }, async (error, response, body) => {
-    if (error || response.statusCode != 200) res.json({ status: 'error', data: body })
+  api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}` }, async (error, response, body) => {
+    if (error || response.statusCode != 200) res.json({ status: 'error', data: response })
 
     const badges = body.trim().split('\r\n')
 
@@ -21,8 +21,8 @@ exports.badges = (req, res) => {
       })
     }
  
-		res.json({ status: 'success', data: badges })
-	})
+    res.json({ status: 'success', data: badges })
+  })
 }
 
 getBadge = (badgeId) => {
