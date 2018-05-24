@@ -13,6 +13,7 @@ exports.badges = (req, res) => {
 
       badges[i] = await getBadge(badgeId).then((badge) => {
         return { 
+          id: badge.id,         	
           name: badge.name, 
           descr: badge.description, 
           img: badge.image, 
