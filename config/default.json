@@ -1,7 +1,7 @@
 {
   "port": 4000,
   "urlApi": "https://openbadgefactory.com/v1",
-  "clientId": "",
+  "clientId": "P7F99NaEEOa66L",
   "email": {
     "subject": "Vous venez de gagner un badge",
     "body": "Bonjour, :recipientName, vous venez de recevoir un badge.",
