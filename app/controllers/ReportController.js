@@ -21,7 +21,7 @@ exports.metrics = (req, res) => {
             count = (count + JSON.parse(badgeEvents[i]).recipient.length)
           }
 
-          return issues
+          return count
         }
       })
 

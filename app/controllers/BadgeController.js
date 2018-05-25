@@ -3,35 +3,36 @@ const moment = require('moment')
 const cfg = require('config')
 
 exports.badges = (req, res) => {
-  api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}` }, async (error, response, body) => {
-    if (error || response.statusCode != 200) res.json({ status: 'error', data: response })
+  api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}&order_by=desc` }, async (error, response, body) => {
+    if (error || response.statusCode != 200 || response.body.length == 0) res.json({ status: 'error', data: 'NO_BADGES' })
 
-    const badges = body.trim().split('\r\n')
+    const events = body.trim().split('\r\n').map(v => JSON.parse(v))
 
-    for (let i = 0; i < badges.length; i++) {
-      const badgeId = JSON.parse(badges[i]).badge_id
+    try { 
+      const badgeIds = Array.from(new Set(events.map(v => v.badge_id)))
+      const badges = await getBadges(badgeIds)
 
-      badges[i] = await getBadge(badgeId).then((badge) => {
-        return { 
-          id: badge.id,         	
-          name: badge.name, 
-          descr: badge.description, 
-          img: badge.image, 
-          issued_on: badge.issued_on 
+      for (let i = 0; i < events.length; i++) {
+        for (let j = 0; j < badges.length; j++) {
+          if (events[i].badge_id == badges[j].id) {
+            badges[j].issued_on = events[i].issued_on
+          }
         }
-      })
+      }
+
+      res.json({ status: 'success', data: badges })
+    } catch(err) {
+      res.json({ status: 'error', data: 'NO_BADGES' })
     }
- 
-    res.json({ status: 'success', data: badges })
   })
 }
 
-getBadge = (badgeId) => {
+function getBadges(badgeIds) {
   return new Promise((resolve, reject) => {
-    api.req({ method: 'GET', url: `/badge/:clientId/${badgeId}` }, (error, response, body) => {
+    api.req({ method: 'GET', url: `/badge/:clientId?id=${badgeIds.join('|')}` }, (error, response, body) => {
       if (error) reject(error)
 
-      resolve(JSON.parse(body))
+      resolve(body.trim().split('\r\n').map(v => JSON.parse(v)))
     })
   })
 }
