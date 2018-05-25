@@ -4,7 +4,7 @@ const cfg = require('config')
 
 exports.badges = (req, res) => {
   api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}&order_by=desc` }, async (error, response, body) => {
-    if (error || response.statusCode != 200) res.json({ status: 'error', data: body })
+    if (error || response.statusCode != 200 || response.body.length == 0) res.json({ status: 'error', data: 'NO_BADGES' })
 
     const events = body.trim().split('\r\n').map(v => JSON.parse(v))
 
@@ -12,9 +12,17 @@ exports.badges = (req, res) => {
       const badgeIds = Array.from(new Set(events.map(v => v.badge_id)))
       const badges = await getBadges(badgeIds)
 
+      for (let i = 0; i < events.length; i++) {
+        for (let j = 0; j < badges.length; j++) {
+          if (events[i].badge_id == badges[j].id) {
+            badges[j].issued_on = events[i].issued_on
+          }
+        }
+      }
+
       res.json({ status: 'success', data: badges })
     } catch(err) {
-      console.log(err)
+      res.json({ status: 'error', data: 'NO_BADGES' })
     }
   })
 }
