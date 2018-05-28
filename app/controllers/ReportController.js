@@ -28,7 +28,11 @@ exports.metrics = (req, res) => {
       metrics[i] = { id: badge.id, name: badge.name, issues, descr: badge.description, img: badge.image }
     }
 
-    res.json(({ status: 'success', data: metrics }))
+    const issues = metrics.reduce((acc, m) => {
+    	return (((acc.issues != undefined) ? parseInt(acc.issues) : acc) + parseInt(m.issues))
+    })
+
+    res.json(({ status: 'success', data: { metrics, issues } }))
 	})
 }
 
