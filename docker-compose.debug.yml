@@ -1,17 +1,26 @@
 version: '2'
 
 services:
-  opbadges:
-    container_name: opbadges
+  opbadge:
+    container_name: opbadge
     image: node:9.1.0-wheezy
     volumes:
       - .:/app
     working_dir: /app
     ports:
-      - 3000:3000
+      - 4000:4000
     environment:
       - http_proxy
       - https_proxy
       - no_proxy
     tty: true
     command: npm run dev
+    links:
+      - opbadgedb:mongodb
+
+  opbadgedb:
+    container_name: opbadgedb
+    image: mongo:3.4.4
+    volumes:
+      - ./data/db:/data/db
+    command: --smallfiles

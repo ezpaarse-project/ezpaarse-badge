@@ -1,4 +1,4 @@
-const api = require('../api')
+const api = require('../lib/api')
 const cfg = require('config')
 const pkg = require('../../package.json')
 

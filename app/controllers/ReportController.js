@@ -1,4 +1,4 @@
-const api = require('../api')
+const api = require('../lib/api')
 
 exports.metrics = (req, res) => {
   api.req({ method: 'GET', url: `/badge/:clientId` }, async (error, response, body) => {
