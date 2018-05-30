@@ -4,7 +4,7 @@ const cfg = require('config')
 const mongo = require('../lib/mongo')
 
 exports.badges = (req, res) => {
-  mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
+  mongo.get('wallet').find().toArray((err, result) => {
     if (err) res.json({ status: 'error', data: 'NO_BADGES' })
 
     res.json({ result })

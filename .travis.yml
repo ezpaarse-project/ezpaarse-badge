@@ -1,0 +1,6 @@
+sudo: enabled
+language: node_js
+node_js:
+  - "9.1"
+services:
+  - docker
