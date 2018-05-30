@@ -29,6 +29,10 @@ $ docker-compose up
 + logEntry :
   + client : Name of the badge-issuing application
   + issuer : Issuer name
++ mongo :
+  + host : Database host
+  + port : Database port
+  + db : Database name
 
 ## API routes
 <table>

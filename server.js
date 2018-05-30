@@ -1,16 +1,18 @@
 const express = require('express')
 const app = express()
-const fs = require('fs')
-const path = require('path')
 const cfg = require('config')
 const bodyParser = require('body-parser')
+const mongo = require('./app/lib/mongo')
 
 process.env.PORT = cfg.port
-const host = process.env.HOST || '0.0.0.0'
-const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+
+const host = process.env.HOST || '0.0.0.0'
+const port = process.env.PORT || 3000
+
+const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
@@ -32,5 +34,14 @@ app.post('/emit', BadgeController.emit)
 
 app.get('/metrics', ReportController.metrics)
 
-app.listen(port, host)
-console.log(`Listening on http://${host}:${port}`)
+mongo.connect(mongoUrl, (err) => {
+  if (err) {
+    // eslint-disable-next-line
+    console.error(`Couldn't connect to ${mongoUrl}`)
+    process.exit(1)
+  }
+
+  app.listen(port, host)
+  // eslint-disable-next-line
+  console.log(`Listening on http://${host}:${port}`)
+})

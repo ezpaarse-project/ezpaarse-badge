@@ -13,4 +13,13 @@ services:
         - http_proxy
         - https_proxy
     restart: on-failure
+    links:
+      - opbadgedb:mongodb
       
+  opbagdedb:
+    container_name: opbagdedb
+    image: mongo:3.4.4
+    volumes:
+      - ./data/db:/data/db
+    command: --smallfiles
+    restart: on-failure
