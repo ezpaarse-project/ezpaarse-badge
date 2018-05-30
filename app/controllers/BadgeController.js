@@ -4,53 +4,32 @@ const cfg = require('config')
 const mongo = require('../lib/mongo')
 
 exports.badges = (req, res) => {
-  mongo.get('wallet').find().toArray((err, result) => {
+  mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
     if (err) res.json({ status: 'error', data: 'NO_BADGES' })
 
-    res.json({ result })
+    if (result) {
+      const badgesId = result.badges.map(b => b.id).join('|')
 
-    // api.req({ method: 'GET', url: `/badge/:clientId?id=P9FXW8aODQa12D|` }, (error, response, body) => {
-    //   if (error || response.statusCode != 200 || response.body.length == 0) res.json({ status: 'error', data: 'NO_BADGES' })
+      api.req({ method: 'GET', url: `/badge/:clientId?id=${badgesId}` }, (error, response, body) => {
+        if (error || response.statusCode !== 200 || response.body.length === 0) res.json({ status: 'error', data: 'NO_BADGES' })
 
-    //   res.json({ status: 'success', data: JSON.parse(body) })
-    // })
+        const badges = body.trim().split('\r\n').map(badge => JSON.parse(badge))
+
+        for (let i = 0; i < result.badges.length; i++) {
+          for (let j = 0; j < badges.length; j++) {
+            if (result.badges[i].id === badges[j].id) {
+              badges[j].issued_on = result.badges[i].issuedOn
+            }
+          }
+        }
+
+        res.json({ status: 'success', data: badges })
+      })
+    } else {
+      res.json({ status: 'success', data: 'NO_BADGES' })
+    }
   })
 }
-
-// exports.badges = (req, res) => {
-//   api.req({ method: 'GET', url: `/event/:clientId?email=${req.query.email}&order_by=desc` }, async (error, response, body) => {
-//     if (error || response.statusCode != 200 || response.body.length == 0) res.json({ status: 'error', data: 'NO_BADGES' })
-
-//     const events = body.trim().split('\r\n').map(v => JSON.parse(v))
-
-//     try {
-//       const badgeIds = Array.from(new Set(events.map(v => v.badge_id)))
-//       const badges = await getBadges(badgeIds)
-
-//       for (let i = 0; i < events.length; i++) {
-//         for (let j = 0; j < badges.length; j++) {
-//           if (events[i].badge_id == badges[j].id) {
-//             badges[j].issued_on = events[i].issued_on
-//           }
-//         }
-//       }
-
-//       res.json({ status: 'success', data: badges })
-//     } catch(err) {
-//       res.json({ status: 'error', data: 'NO_BADGES' })
-//     }
-//   })
-// }
-
-// function getBadges(badgeIds) {
-//   return new Promise((resolve, reject) => {
-//     api.req({ method: 'GET', url: `/badge/:clientId?id=${badgeIds.join('|')}` }, (error, response, body) => {
-//       if (error) reject(error)
-
-//       resolve(body.trim().split('\r\n').map(v => JSON.parse(v)))
-//     })
-//   })
-// }
 
 exports.emit = (req, res) => {
   const badgeId = req.body.badgeId
