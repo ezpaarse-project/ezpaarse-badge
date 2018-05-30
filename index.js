@@ -1,7 +1,5 @@
 const express = require('express')
 const app = express()
-const fs = require('fs')
-const path = require('path')
 const cfg = require('config')
 const bodyParser = require('body-parser')
 const mongo = require('./app/lib/mongo')
@@ -36,13 +34,13 @@ app.post('/emit', BadgeController.emit)
 app.get('/metrics', ReportController.metrics)
 
 mongo.connect(mongoUrl, (err) => {
-  console.log(err)
   if (err) {
+    // eslint-disable-next-line
     console.error(`Couldn't connect to ${mongoUrl}`)
     process.exit(1)
   }
-  
+
   app.listen(port, host)
+  // eslint-disable-next-line
   console.log(`Listening on http://${host}:${port}`)
 })
-

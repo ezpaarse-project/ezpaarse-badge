@@ -11,7 +11,7 @@ exports.badges = (req, res) => {
 
     // api.req({ method: 'GET', url: `/badge/:clientId?id=P9FXW8aODQa12D|` }, (error, response, body) => {
     //   if (error || response.statusCode != 200 || response.body.length == 0) res.json({ status: 'error', data: 'NO_BADGES' })
-  
+
     //   res.json({ status: 'success', data: JSON.parse(body) })
     // })
   })
@@ -23,7 +23,7 @@ exports.badges = (req, res) => {
 
 //     const events = body.trim().split('\r\n').map(v => JSON.parse(v))
 
-//     try { 
+//     try {
 //       const badgeIds = Array.from(new Set(events.map(v => v.badge_id)))
 //       const badges = await getBadges(badgeIds)
 
@@ -58,25 +58,25 @@ exports.emit = (req, res) => {
   const name = req.body.recipient.name
 
   const errors = []
-  if (badgeId == undefined || badgeId.length == 0) {
-    errors.push("INVALID_BADGE_ID")
+  if (badgeId === undefined || badgeId.length === 0) {
+    errors.push('INVALID_BADGE_ID')
   }
 
-  const regexEmail = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-  if (email == undefined || email.length == 0 || !regexEmail.test(email)) {
-    errors.push("INVALID_EMAIL_ADDRESS")
+  const regexEmail = '/^(([^<>()[].,;:@"]+(.[^<>()[].,;:@"]+)*)|(".+"))@(([^<>()[].,;:@"]+.)+[^<>()[].,;:@"]{2,})$/i'
+  if (email === undefined || email.length === 0 || !regexEmail.test(email)) {
+    errors.push('INVALID_EMAIL_ADDRESS')
   }
 
-  if (name == undefined || name.length == 0) {
-    errors.push("INVALID_RECIPIENT_NAME")
+  if (name === undefined || name.length === 0) {
+    errors.push('INVALID_RECIPIENT_NAME')
   }
 
   if (errors.length > 0) {
     res.status(400)
-    res.json({ status: "error", data: errors })
+    res.json({ status: 'error', data: errors })
   } else {
-    api.req({ 
-      method: 'POST', 
+    api.req({
+      method: 'POST',
       url: `/badge/:clientId/${badgeId}`,
       data: {
         recipient: [ email ],
@@ -91,9 +91,9 @@ exports.emit = (req, res) => {
         }
       }
     }, (error, response, body) => {
-      if (error || response.statusCode != 201) res.json({ status: 'error', data: body.error })
-  
-      res.json({ status: 'success', data: "Badge emitted" })
+      if (error || response.statusCode !== 201) res.json({ status: 'error', data: body.error })
+
+      res.json({ status: 'success', data: 'BADGE_EMITTED' })
     })
   }
 }

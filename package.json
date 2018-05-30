@@ -10,7 +10,9 @@
     "start": "node index.js",
     "conf": "node bin/index.js",
     "dev": "./node_modules/.bin/nodemon ./index.js -e js,json",
-    "test": "mocha"
+    "test": "mocha",
+    "precommit": "npm run lint",
+    "lint": "eslint --ext .js --ignore-path .gitignore ."
   },
   "author": "",
   "license": "ISC",
