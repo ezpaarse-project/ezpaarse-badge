@@ -78,6 +78,7 @@ $ docker-compose up
           <li>
             <strong>recipient</strong>
             <ul>
+              <li><strong>id</strong>: recipient id (trello id)</li>
               <li><strong>email</strong>: recipient email</li>
               <li><strong>name</strong>: recipient name</li>
             </ul>

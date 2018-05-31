@@ -33,6 +33,7 @@ exports.badges = (req, res) => {
 
 exports.emit = (req, res) => {
   const badgeId = req.body.badgeId
+  const id = req.body.recipient.id
   const email = req.body.recipient.email
   const name = req.body.recipient.name
 
