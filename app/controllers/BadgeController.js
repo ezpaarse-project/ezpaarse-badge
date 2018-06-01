@@ -8,9 +8,7 @@ exports.badges = (req, res) => {
     if (err) res.json({ status: 'error', data: 'NO_BADGES' })
 
     if (result) {
-      const badgesId = result.badges.map(b => b.id).join('|')
-
-      api.req({ method: 'GET', url: `/badge/:clientId?id=${badgesId}` }, (error, response, body) => {
+      api.req({ method: 'GET', url: `/badge/:clientId` }, (error, response, body) => {
         if (error || response.statusCode !== 200 || response.body.length === 0) res.json({ status: 'error', data: 'NO_BADGES' })
 
         const badges = body.trim().split('\r\n').map(badge => JSON.parse(badge))
@@ -33,6 +31,7 @@ exports.badges = (req, res) => {
 
 exports.emit = (req, res) => {
   const badgeId = req.body.badgeId
+  // const id = req.body.recipient.id
   const email = req.body.recipient.email
   const name = req.body.recipient.name
 
