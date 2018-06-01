@@ -16,8 +16,8 @@ services:
     links:
       - opbadgedb:mongodb
       
-  opbagdedb:
-    container_name: opbagdedb
+  opbadgedb:
+    container_name: opbadgedb
     image: mongo:3.4.4
     volumes:
       - ./data/db:/data/db

@@ -1,7 +1,7 @@
 {
   "port": 4000,
   "urlApi": "https://openbadgefactory.com/v1",
-  "clientId": "P7F99NaEEOa66L",
+  "clientId": "",
   "email": {
     "subject": "Vous venez de gagner un badge",
     "body": "Bonjour, :recipientName, vous venez de recevoir un badge.",
@@ -11,5 +11,10 @@
   "logEntry": {
     "client": "ezpaarse-badge",
     "issuer": "ezPAARSE"
+  },
+  "mongo": {
+    "host": "mongodb",
+    "port": "27017",
+    "db": "opbadges"
   }
 }
