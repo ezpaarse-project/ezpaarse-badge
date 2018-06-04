@@ -4,15 +4,15 @@ const cfg = require('config')
 const mongo = require('../lib/mongo')
 
 exports.badges = (req, res) => {
-  mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
-    if (err) res.json({ status: 'error', data: 'NO_BADGES' })
+  api.req({ method: 'GET', url: `/badge/:clientId` }, (error, response, body) => {
+    if (error || response.statusCode !== 200 || response.body.length === 0) res.json({ status: 'error', data: 'NO_BADGES' })
 
-    if (result) {
-      api.req({ method: 'GET', url: `/badge/:clientId` }, (error, response, body) => {
-        if (error || response.statusCode !== 200 || response.body.length === 0) res.json({ status: 'error', data: 'NO_BADGES' })
+    const badges = body.trim().split('\r\n').map(badge => JSON.parse(badge))
 
-        const badges = body.trim().split('\r\n').map(badge => JSON.parse(badge))
+    mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
+      if (err) res.json({ status: 'error', data: 'NO_BADGES' })
 
+      if (result) {
         for (let i = 0; i < result.badges.length; i++) {
           for (let j = 0; j < badges.length; j++) {
             if (result.badges[i].id === badges[j].id) {
@@ -20,12 +20,10 @@ exports.badges = (req, res) => {
             }
           }
         }
+      }
+    })
 
-        res.json({ status: 'success', data: badges })
-      })
-    } else {
-      res.json({ status: 'success', data: 'NO_BADGES' })
-    }
+    res.json({ status: 'success', data: badges })
   })
 }
 
