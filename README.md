@@ -7,9 +7,9 @@
 + OpenSSL
 
 ## Configuration
-Generate your **certificate signing request token** in **Admin tools &rarr; API key**, past your certificate in **cert.token** file and run this command :
+Generate your **certificate signing request token** in **Admin tools &rarr; API key**, use your certificate in **OBF_CERT** (environment variable) and run this command :
 ```
-$ npm run conf
+$ docker-compose run opbadge npm run conf
 ```
 
 ## Build Setup

@@ -28,7 +28,7 @@ console.log(
 )
 
 const run = async () => {
-  const apiKey = fs.readFileSync('./cert.token', 'utf-8')
+  const apiKey = process.env.OBF_CERT
 
   if (apiKey.length > 0) {
     request(`${urlApi}/client/OBF.rsa.pub`, (error, response, body) => {

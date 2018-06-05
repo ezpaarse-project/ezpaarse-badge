@@ -7,11 +7,14 @@ services:
       - http_proxy
       - https_proxy
       - no_proxy
+      - OBF_CERT
     build:
       context: .
       args:
         - http_proxy
         - https_proxy
+    volumes:
+      - ./ssl:/usr/src/app/app/ssl
     restart: on-failure
     links:
       - opbadgedb:mongodb
