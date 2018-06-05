@@ -1,5 +1,6 @@
 const api = require('../lib/api')
-const cfg = require('config')
+const fs = require('fs')
+const path = require('path')
 const pkg = require('../../package.json')
 
 exports.app = (req, res) => {
@@ -10,6 +11,8 @@ exports.ping = (req, res) => {
   api.req({ method: 'GET', url: `/ping/:clientId` }, (error, response, body) => {
     if (error || response.statusCode !== 200) res.json({ status: 'error', data: body })
 
-    res.json({ status: (body === cfg.clientId) ? 'success' : 'error', data: (body === cfg.clientId) ? 'pong' : 'Customer IDs do not match' })
+    const clientId = fs.readFileSync(path.resolve('app/ssl/client'), 'utf-8')
+
+    res.json({ status: (body === clientId) ? 'success' : 'error', data: (body === clientId) ? 'pong' : 'Customer IDs do not match' })
   })
 }

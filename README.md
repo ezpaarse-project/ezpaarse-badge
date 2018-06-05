@@ -9,7 +9,7 @@
 ## Configuration
 Generate your **certificate signing request token** in **Admin tools &rarr; API key**, use your certificate in **OBF_CERT** (environment variable) and run this command :
 ```
-$ docker-compose run opbadge npm run conf
+$ npm run conf
 ```
 
 ## Build Setup
