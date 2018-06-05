@@ -30,55 +30,58 @@ console.log(
 const run = async () => {
   const apiKey = process.env.OBF_CERT
 
-  if (apiKey.length > 0) {
-    request(`${urlApi}/client/OBF.rsa.pub`, (error, response, body) => {
-      // eslint-disable-next-line
-      if (error) console.log(chalk.red(error))
+  if (apiKey.length <= 0) {
+    // eslint-disable-next-line
+    console.log(chalk.red('Please add your certificate signing request token in cert.token file !'))
+    process.exit(1)
+  }
 
-      const publicKey = forge.pki.publicKeyFromPem(body)
-      const apiKeyDecoded = forge.util.decode64(apiKey)
+  request(`${urlApi}/client/OBF.rsa.pub`, (error, response, body) => {
+    // eslint-disable-next-line
+    if (error) console.log(chalk.red(error))
 
-      const decrypt = JSON.parse(forge.pki.rsa.decrypt(apiKeyDecoded, publicKey, true))
+    const publicKey = forge.pki.publicKeyFromPem(body)
+    const apiKeyDecoded = forge.util.decode64(apiKey)
 
-      exec(`openssl req -new -nodes -batch -days 1095 -newkey rsa:2048 -keyout ./app/ssl/obf.key -subj '/CN=${decrypt.id}' > ./app/ssl/obf.csr`, (err, stdout, stderr) => {
+    const decrypt = JSON.parse(forge.pki.rsa.decrypt(apiKeyDecoded, publicKey, true))
+
+    exec(`openssl req -new -nodes -batch -days 1095 -newkey rsa:2048 -keyout ./app/ssl/obf.key -subj '/CN=${decrypt.id}' > ./app/ssl/obf.csr`, (err, stdout, stderr) => {
+      if (err) {
         // eslint-disable-next-line
-        if (err) console.log("Error: " + stderr)
+        console.log(`Error: ${stderr}`)
+        process.exit(1)
+      }
 
+      request({
+        method: 'POST',
+        url: `${urlApi}/client/${decrypt.id}/sign_request`,
+        json: {
+          signature: apiKey,
+          request: fs.readFileSync('./app/ssl/obf.csr').toString()
+        }
+      }, (error, response, body) => {
+        if (error || body.error) {
+          // eslint-disable-next-line
+          console.log(chalk.red(error || body.error))
+          process.exit(1)
+        }
+
+        fs.writeFileSync('./app/ssl/certificate.pem', body)
         request({
-          method: 'POST',
-          url: `${urlApi}/client/${decrypt.id}/sign_request`,
-          json: {
-            signature: apiKey,
-            request: fs.readFileSync('./app/ssl/obf.csr').toString()
-          }
+          method: 'GET',
+          url: `${urlApi}/ping/${decrypt.id}`
         }, (error, response, body) => {
           // eslint-disable-next-line
           if (error || body.error) console.log(chalk.red(error || body.error))
 
-          if (!body.error) fs.writeFileSync('./app/ssl/certificate.pem', body)
+          fs.writeFileSync('./app/ssl/client', decrypt.id)
 
-          request({
-            method: 'GET',
-            url: `${urlApi}/ping/${decrypt.id}`
-          }, (error, response, body) => {
-            // eslint-disable-next-line
-            if (error || body.error) console.log(chalk.red(error || body.error))
-
-            const configFile = fs.readFileSync('./config/default.json', 'utf-8')
-            const json = JSON.parse(configFile)
-            json.clientId = decrypt.id
-            fs.writeFileSync('./config/default.json', JSON.stringify(json, null, 2))
-
-            // eslint-disable-next-line
-            console.log(chalk.yellow("Configuration ended"))
-          })
+          // eslint-disable-next-line
+          console.log(chalk.yellow('Configuration done'))
         })
       })
     })
-  } else {
-    // eslint-disable-next-line
-    console.log(chalk.red("Please add your certificate signing request token in cert.token file !"))
-  }
+  })
 }
 
 run()
