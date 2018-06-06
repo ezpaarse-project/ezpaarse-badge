@@ -14,8 +14,6 @@ services:
       - https_proxy
       - no_proxy
       - OBF_CERT
-    volumes:
-      - ./ssl:/usr/src/app/app/ssl
     tty: true
     command: npm run dev
     links:

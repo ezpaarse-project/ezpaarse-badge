@@ -13,8 +13,6 @@ services:
       args:
         - http_proxy
         - https_proxy
-    volumes:
-      - ./ssl:/usr/src/app/app/ssl
     restart: on-failure
     links:
       - opbadgedb:mongodb
