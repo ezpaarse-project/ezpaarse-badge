@@ -42,7 +42,7 @@ exports.emit = (req, res) => {
     errors.push('INVALID_USER_ID')
   }
 
-  const regexEmail = '/^(([^<>()[].,;:@"]+(.[^<>()[].,;:@"]+)*)|(".+"))@(([^<>()[].,;:@"]+.)+[^<>()[].,;:@"]{2,})$/i'
+  const regexEmail = /^(([^<>()[].,;:@"]+(.[^<>()[].,;:@"]+)*)|(".+"))@(([^<>()[].,;:@"]+.)+[^<>()[].,;:@"]{2,})$/i
   if (email === undefined || email.length === 0 || !regexEmail.test(email)) {
     errors.push('INVALID_EMAIL_ADDRESS')
   }
@@ -85,7 +85,10 @@ exports.emit = (req, res) => {
 
             mongo.get('wallet').findOneAndUpdate(
               { userId },
-              { $push: { badges: { id: badgeId, issuedOn } } },
+              {
+                $push: { badges: { id: badgeId, issuedOn } },
+                $set: { lastModified: new Date() }
+              },
               { upsert: true },
               (err, result) => {
                 if (err) throw err
