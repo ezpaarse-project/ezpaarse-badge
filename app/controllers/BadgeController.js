@@ -21,9 +21,9 @@ exports.badges = (req, res) => {
           }
         }
       }
-    })
 
-    res.json({ status: 'success', data: badges })
+      res.json({ status: 'success', data: badges })
+    })
   })
 }
 
