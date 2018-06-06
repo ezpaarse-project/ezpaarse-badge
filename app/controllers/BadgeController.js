@@ -53,51 +53,51 @@ exports.emit = (req, res) => {
   if (errors.length > 0) {
     res.status(400)
     res.json({ status: 'error', data: errors })
-  } else {
-    mongo.get('wallet').findOne({ userId }, (err, result) => {
-      if (err) return false
-
-      if (result) {
-        const found = result.badges.find((badge) => {
-          return badge.id === badgeId
-        })
-
-        if (found === undefined) {
-          const issuedOn = moment().unix()
-          api.req({
-            method: 'POST',
-            url: `/badge/:clientId/${badgeId}`,
-            data: {
-              recipient: [ email ],
-              issued_on: issuedOn,
-              email_subject: cfg.email.subject,
-              email_body: cfg.email.body.replace(':recipientName', name),
-              email_link_text: cfg.email.button,
-              email_footer: cfg.email.footer,
-              log_entry: {
-                client: cfg.logEntry.client,
-                issuer: cfg.logEntry.issuer
-              }
-            }
-          }, (error, response, body) => {
-            if (error || response.statusCode !== 201) res.json({ status: 'error', data: body.error })
-
-            mongo.get('wallet').findOneAndUpdate(
-              { userId },
-              {
-                $push: { badges: { id: badgeId, issuedOn } },
-                $set: { lastModified: new Date() }
-              },
-              { upsert: true },
-              (err, result) => {
-                if (err) throw err
-
-                res.json({ status: 'success', data: 'BADGE_EMITTED' })
-              }
-            )
-          })
-        }
-      }
-    })
   }
+
+  mongo.get('wallet').findOne({ userId }, (err, result) => {
+    if (err) return false
+
+    if (result) {
+      const found = result.badges.find((badge) => {
+        return badge.id === badgeId
+      })
+
+      if (found === undefined) {
+        const issuedOn = moment().unix()
+        api.req({
+          method: 'POST',
+          url: `/badge/:clientId/${badgeId}`,
+          data: {
+            recipient: [ email ],
+            issued_on: issuedOn,
+            email_subject: cfg.email.subject,
+            email_body: cfg.email.body.replace(':recipientName', name),
+            email_link_text: cfg.email.button,
+            email_footer: cfg.email.footer,
+            log_entry: {
+              client: cfg.logEntry.client,
+              issuer: cfg.logEntry.issuer
+            }
+          }
+        }, (error, response, body) => {
+          if (error || response.statusCode !== 201) res.json({ status: 'error', data: body.error })
+
+          mongo.get('wallet').findOneAndUpdate(
+            { userId },
+            {
+              $push: { badges: { id: badgeId, issuedOn } },
+              $set: { lastModified: new Date() }
+            },
+            { upsert: true },
+            (err, result) => {
+              if (err) throw err
+
+              res.json({ status: 'success', data: 'BADGE_EMITTED' })
+            }
+          )
+        })
+      }
+    }
+  })
 }
