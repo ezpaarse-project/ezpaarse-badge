@@ -42,8 +42,7 @@ exports.emit = (req, res) => {
     errors.push('INVALID_USER_ID')
   }
 
-  const regexEmail = /^(([^<>()[].,;:@"]+(.[^<>()[].,;:@"]+)*)|(".+"))@(([^<>()[].,;:@"]+.)+[^<>()[].,;:@"]{2,})$/i
-  if (email === undefined || email.length === 0 || !regexEmail.test(email)) {
+  if (email === undefined || email.length === 0) {
     errors.push('INVALID_EMAIL_ADDRESS')
   }
 
