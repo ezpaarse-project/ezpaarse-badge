@@ -5,14 +5,20 @@ const mongo = require('../lib/mongo')
 
 exports.badges = (req, res) => {
   api.req({ method: 'GET', url: `/badge/:clientId` }, (error, response, body) => {
-    if (error || response.statusCode !== 200 || response.body.length === 0) res.json({ status: 'error', data: 'NO_BADGES' })
+    if (error || response.statusCode !== 200 || !body) return res.json({ status: 'error', data: 'NO_BADGES' })
 
-    const badges = body.trim().split('\r\n').map(badge => JSON.parse(badge))
+    const badges = body.trim().split('\r\n').map(badge => {
+      try {
+        return JSON.parse(badge)
+      } catch (e) {
+        return null
+      }
+    }).filter(badge => badge)
 
     mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
-      if (err) res.json({ status: 'error', data: 'NO_BADGES' })
+      if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
 
-      if (result) {
+      if (result && result.badges) {
         for (let i = 0; i < result.badges.length; i++) {
           for (let j = 0; j < badges.length; j++) {
             if (result.badges[i].id === badges[j].id) {
@@ -34,19 +40,19 @@ exports.emit = (req, res) => {
   const name = req.body.recipient.name
 
   const errors = []
-  if (badgeId === undefined || badgeId.length === 0) {
+  if (!badgeId) {
     errors.push('INVALID_BADGE_ID')
   }
 
-  if (userId === undefined || userId.length === 0) {
+  if (!userId) {
     errors.push('INVALID_USER_ID')
   }
 
-  if (email === undefined || email.length === 0) {
+  if (!email) {
     errors.push('INVALID_EMAIL_ADDRESS')
   }
 
-  if (name === undefined || name.length === 0) {
+  if (!name) {
     errors.push('INVALID_RECIPIENT_NAME')
   }
 
