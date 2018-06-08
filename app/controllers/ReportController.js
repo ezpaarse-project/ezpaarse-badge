@@ -2,7 +2,7 @@ const api = require('../lib/api')
 
 exports.metrics = (req, res) => {
   api.req({ method: 'GET', url: `/badge/:clientId` }, async (error, response, body) => {
-    if (error || response.statusCode !== 200) res.json({ status: 'error', data: body })
+    if (error || response.statusCode !== 200) return res.json({ status: 'error', data: body })
 
     const badges = body.trim().split('\r\n')
     const metrics = []
@@ -39,7 +39,7 @@ exports.metrics = (req, res) => {
 function getBadge (badgeId) {
   return new Promise((resolve, reject) => {
     api.req({ method: 'GET', url: `/event/:clientId?badge_id=${badgeId}` }, (error, response, body) => {
-      if (error) reject(error)
+      if (error) return reject(error)
 
       resolve((body.length > 0) ? body : null)
     })

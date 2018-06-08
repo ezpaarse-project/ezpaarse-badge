@@ -9,7 +9,7 @@ exports.app = (req, res) => {
 
 exports.ping = (req, res) => {
   api.req({ method: 'GET', url: `/ping/:clientId` }, (error, response, body) => {
-    if (error || response.statusCode !== 200) res.json({ status: 'error', data: body })
+    if (error || response.statusCode !== 200) return res.json({ status: 'error', data: body })
 
     const clientId = fs.readFileSync(path.resolve('app/ssl/client'), 'utf-8')
 
