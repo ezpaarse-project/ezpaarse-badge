@@ -30,9 +30,9 @@ console.log(
 const run = async () => {
   const apiKey = process.env.OBF_CERT
 
-  if (apiKey.length <= 0) {
+  if (!apiKey) {
     // eslint-disable-next-line
-    console.log(chalk.red('Please add your certificate signing request token in cert.token file !'))
+    console.log(chalk.red('Please add your certificate signing request token in the OBF_CERT environment variable !'))
     process.exit(1)
   }
 
