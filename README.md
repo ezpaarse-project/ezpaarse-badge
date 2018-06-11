@@ -20,7 +20,6 @@ $ docker-compose up
 ## Config file
 + port : Application port
 + urlApi : [OpenBadgeFactory API](https://openbadgefactory.com/developers/#open-badge-factory-rest-api)
-+ clientId : Your API ID (automatically set during the configuration)
 + email :
   + subject : Email subject
   + body : Email content, <strong>:recipientName</strong> var replace by user's email
