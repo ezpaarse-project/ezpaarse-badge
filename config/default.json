@@ -12,7 +12,7 @@
     "issuer": "ezPAARSE"
   },
   "mongo": {
-    "host": "mongodb",
+    "host": "localhost",
     "port": "27017",
     "db": "opbadges"
   }
