@@ -63,12 +63,12 @@ $ docker-compose up
       <td>Get user's badges</td>
       <td>Query String
         <ul>
-          <li><strong>email</strong>: user's email</li>
+          <li><strong>id</strong>: trello id</li>
         </ul>
       </td>
     </tr>
     <tr>
-      <td>GET /emit</td>
+      <td>POST /emit</td>
       <td>Get user's badges</td>
       <td>JSON
         <ul>
