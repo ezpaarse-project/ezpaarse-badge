@@ -69,7 +69,7 @@ $ docker-compose up
     </tr>
     <tr>
       <td>POST /emit</td>
-      <td>Get user's badges</td>
+      <td>Emits badge for user</td>
       <td>JSON
         <ul>
           <li>
