@@ -1,0 +1,12 @@
+{
+  "port": "BADGE_PORT",
+  "logEntry": {
+    "client": "BADGE_LOGENTRY_CLIENT",
+    "issuer": "BADGE_LOGENTRY_ISSUER"
+  },
+  "mongo": {
+    "host": "BADGE_MONGO_HOST",
+    "port": "BADGE_MONGO_PORT",
+    "db": "BADGE_MONGO_DB"
+  }
+}
