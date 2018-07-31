@@ -14,6 +14,11 @@ services:
       - https_proxy
       - no_proxy
       - OBF_CERT
+      - BADGE_MONGO_HOST
+      - BADGE_MONGO_PORT
+      - BADGE_MONGO_DB
+      - BADGE_LOGENTRY_CLIENT
+      - BADGE_LOGENTRY_ISSUER
     tty: true
     command: npm run dev
     links:

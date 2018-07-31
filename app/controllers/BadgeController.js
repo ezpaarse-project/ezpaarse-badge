@@ -15,7 +15,7 @@ exports.badges = (req, res) => {
       }
     }).filter(badge => badge)
 
-    mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
+    mongo.get('wallet').findOne({ userId: req.query.id }, async (err, result) => {
       if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
 
       if (result && result.badges) {
@@ -28,7 +28,23 @@ exports.badges = (req, res) => {
         }
       }
 
+      for (let i = 0; i < badges.length; i++) {
+        badges[i].alt_language = await getAltLanguage(badges[i].id).then(altLanguage => {
+          return altLanguage
+        })
+      }
+
       res.json({ status: 'success', data: badges })
+    })
+  })
+}
+
+function getAltLanguage (badgeId) {
+  return new Promise((resolve, reject) => {
+    api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` }, (error, response, body) => {
+      if (error) return reject(error)
+
+      resolve((body.length > 0) ? JSON.parse(body).alt_language : null)
     })
   })
 }
