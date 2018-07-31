@@ -29,9 +29,11 @@ exports.badges = (req, res) => {
       }
 
       for (let i = 0; i < badges.length; i++) {
-        badges[i].alt_language = await getAltLanguage(badges[i].id).then(altLanguage => {
-          return altLanguage
+        const badeInfos = await getBagdeInfos(badges[i].id).then(badeInfos => {
+          return badeInfos
         })
+        badges[i].alt_language = badeInfos.alt_language
+        badges[i].criteria = badeInfos.criteria
       }
 
       res.json({ status: 'success', data: badges })
@@ -39,12 +41,12 @@ exports.badges = (req, res) => {
   })
 }
 
-function getAltLanguage (badgeId) {
+function getBagdeInfos (badgeId) {
   return new Promise((resolve, reject) => {
     api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` }, (error, response, body) => {
       if (error) return reject(error)
 
-      resolve((body.length > 0) ? JSON.parse(body).alt_language : null)
+      resolve((body.length > 0) ? JSON.parse(body) : null)
     })
   })
 }
