@@ -1,0 +1,65 @@
+* { padding: 0; margin: 0; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  width: 960px;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.container img.logo {
+  width: 524px;
+  height: 96px;
+  display: block;
+  margin: 50px auto;
+}
+
+.container .badge {
+  width: inherit;
+  padding: 10px;
+  box-sizing: border-box;
+  display: inline-block;
+  border: 1px solid #ccc;
+}
+
+.container .badge .badgeImg {
+  width: 150px;
+  height: 150px;
+  float: left;
+}
+
+.container .badge .badgeImg img {
+  width: inherit;
+  height: inherit;
+}
+
+.container .badge .badgeInfos {
+  width: calc(100% - 160px);
+  float: left;
+  margin: 15px 0 0 10px;
+  text-align: justify;
+}
+
+.container .badge .badgeInfos p {
+  margin: 10px 0;
+}
+
+.container .footer {
+  width: inherit;
+  height: auto;
+}
+
+.container .footer img {
+  width: 25%;
+  float: right;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.container .footer img:hover {
+  opacity: 0.8;
+}

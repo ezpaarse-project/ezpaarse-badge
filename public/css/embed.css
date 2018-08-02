@@ -1,0 +1,39 @@
+* { padding: 0; margin: 0; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  width: 200px;
+  height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.container .badgeImg img {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 10px auto;
+  margin-bottom: 20px;
+}
+
+.container .badgeInfos p {
+  margin: 10px 0 20px 0;
+}
+
+.container .badgeInfos p.issuedOn {
+  font-size: 14px;
+}
+
+.container .badgeInfos p a {
+  color: blueviolet;
+}
+
+.container .badgeInfos img.angLogo {
+  width: 135px;
+  margin-top: 5px;
+}

@@ -3,14 +3,42 @@ const app = express()
 const cfg = require('config')
 const bodyParser = require('body-parser')
 const mongo = require('./app/lib/mongo')
+const fs = require('fs')
 
 process.env.PORT = cfg.port
 
+app.use(express.static(__dirname))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+app.engine('html', (filePath, options, callback) => {
+  fs.readFile(filePath, (err, content) => {
+    if (err) return callback(new Error(err))
+
+    let rendered = content.toString()
+      .replace(new RegExp('#badge.id#', 'g'), options.badge.id)
+      .replace(new RegExp('#badge.name#', 'g'), options.badge.name)
+      .replace(new RegExp('#badge.issuedOn#', 'g'), options.badge.issuedOn)
+      .replace(new RegExp('#badge.description#', 'g'), options.badge.description)
+      .replace(new RegExp('#badge.criteria#', 'g'), options.badge.criteria)
+      .replace(new RegExp('#badge.img#', 'g'), options.badge.img)
+      .replace(new RegExp('#t.issuedOn#', 'g'), options.t.issuedOn)
+      .replace(new RegExp('#t.seeMore#', 'g'), options.t.seeMore)
+      .replace(new RegExp('#t.description#', 'g'), options.t.description)
+      .replace(new RegExp('#t.criteria#', 'g'), options.t.criteria)
+      .replace(new RegExp('#link.u#', 'g'), options.link.u)
+      .replace(new RegExp('#link.b#', 'g'), options.link.b)
+      .replace(new RegExp('#link.l#', 'g'), options.link.l)
+      .replace(new RegExp('#link.url#', 'g'), options.link.url)
+
+    return callback(null, rendered)
+  })
+})
+app.set('views', './app/views')
+app.set('view engine', 'html')
+
 const host = process.env.HOST || '0.0.0.0'
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
 
 const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`
 
@@ -24,6 +52,7 @@ app.use((req, res, next) => {
 const AppController = require('./app/controllers/AppController')
 const BadgeController = require('./app/controllers/BadgeController')
 const ReportController = require('./app/controllers/ReportController')
+const ShareController = require('./app/controllers/ShareController')
 
 app.get('/', AppController.app)
 
@@ -33,6 +62,9 @@ app.get('/badges', BadgeController.badges)
 app.post('/emit', BadgeController.emit)
 
 app.get('/metrics', ReportController.metrics)
+
+app.get('/embed', ShareController.embed)
+app.get('/view', ShareController.share)
 
 mongo.connect(mongoUrl, (err) => {
   if (err) {
