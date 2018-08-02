@@ -9,8 +9,7 @@ exports.embed = async (req, res) => {
     const badge = {
       name: (req.query.l === 'fr' || !req.query.l) ? data.name : data.alt_language[req.query.l].name,
       img: data.image,
-      issuedOn: 'N/A',
-      description: data.description
+      issuedOn: 'N/A'
     }
 
     const link = {
@@ -39,8 +38,8 @@ exports.share = async (req, res) => {
       name: (req.query.l === 'fr' || !req.query.l) ? data.name : data.alt_language[req.query.l].name,
       img: data.image,
       issuedOn: 'N/A',
-      description: data.description,
-      criteria: data.criteria
+      description: (req.query.l === 'fr' || !req.query.l) ? data.description : data.alt_language[req.query.l].description,
+      criteria: (req.query.l === 'fr' || !req.query.l) ? data.criteria : data.alt_language[req.query.l].criteria
     }
 
     const link = {
