@@ -15,7 +15,7 @@ app.engine('html', (filePath, options, callback) => {
   fs.readFile(filePath, (err, content) => {
     if (err) return callback(new Error(err))
 
-    let rendered = content.toString()
+    const rendered = content.toString()
       .replace(new RegExp('#badge.id#', 'g'), options.badge.id)
       .replace(new RegExp('#badge.name#', 'g'), options.badge.name)
       .replace(new RegExp('#badge.issuedOn#', 'g'), options.badge.issuedOn)
