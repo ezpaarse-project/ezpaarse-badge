@@ -5,6 +5,7 @@ const api = require('../lib/api')
 const mongo = require('../lib/mongo')
 
 exports.embed = (req, res) => {
+  console.log(req.headers['X-Forwarded-For'])
   render(req, res, 'embed')
 }
 
