@@ -5,6 +5,7 @@ const api = require('../lib/api')
 const mongo = require('../lib/mongo')
 
 exports.embed = (req, res) => {
+  // eslint-disable-next-line
   console.log(req.headers['X-Forwarded-For'])
   render(req, res, 'embed')
 }
@@ -20,11 +21,11 @@ function render (req, res, view) {
     const data = JSON.parse(body)
     const badge = {
       id: req.query.b,
-      name: (req.query.l === 'fr' || !req.query.l) ? data.name : data.alt_language[req.query.l].name,
+      name: (req.query.l === 'fr' || !req.query.l) ? data.name : (data.alt_language[req.query.l] ? data.alt_language[req.query.l].name : data.name),
       img: data.image,
       issuedOn: 'N/A',
-      description: (req.query.l === 'fr' || !req.query.l) ? data.description : data.alt_language[req.query.l].description,
-      criteria: (req.query.l === 'fr' || !req.query.l) ? data.criteria : data.alt_language[req.query.l].criteria
+      description: (req.query.l === 'fr' || !req.query.l) ? data.description : (data.alt_language[req.query.l] ? data.alt_language[req.query.l].description : data.description),
+      criteria: (req.query.l === 'fr' || !req.query.l) ? data.criteria : (data.alt_language[req.query.l] ? data.alt_language[req.query.l].criteria : data.criteria)
     }
 
     const link = {
@@ -45,11 +46,18 @@ function render (req, res, view) {
     mongo.get('wallet').findOne({ userId: req.query.u, 'badges.id': req.query.b }, { 'badges.$': 1 }, (err, result) => {
       if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
 
-      if (result) {
-        badge.issuedOn = moment.unix(result.badges[0].issuedOn).format((!req.query.l || req.query.l === 'fr') ? 'DD/MM/YYYY' : 'YYYY-MM-DD')
+      let t = null
+      try {
+        if (result) {
+          badge.issuedOn = moment.unix(result.badges[0].issuedOn).format((!req.query.l || req.query.l === 'fr') ? 'DD/MM/YYYY' : 'YYYY-MM-DD')
+        }
+        t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${(!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l}.json`), 'utf-8'))
+      } catch (err) {
+        t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/fr.json`), 'utf-8'))
+        if (result) {
+          badge.issuedOn = moment.unix(result.badges[0].issuedOn).format('DD/MM/YYYY')
+        }
       }
-
-      const t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${(!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l}.json`), 'utf-8'))
       res.render(`${view}`, { badge, t, link, style })
     })
   })
