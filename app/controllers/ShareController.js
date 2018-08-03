@@ -5,8 +5,6 @@ const api = require('../lib/api')
 const mongo = require('../lib/mongo')
 
 exports.embed = (req, res) => {
-  // eslint-disable-next-line
-  console.log(req.headers['X-Forwarded-For'])
   render(req, res, 'embed')
 }
 
@@ -32,7 +30,7 @@ function render (req, res, view) {
       u: req.query.u,
       b: req.query.b,
       l: (!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l,
-      url: `${req.protocol}://${req.headers.host}`
+      url: req.get('X-Forwarded-For')
     }
 
     const style = {
