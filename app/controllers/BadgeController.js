@@ -1,6 +1,7 @@
 const api = require('../lib/api')
 const moment = require('moment')
 const cfg = require('config')
+const shortid = require('shortid')
 const mongo = require('../lib/mongo')
 
 exports.badges = (req, res) => {
@@ -87,6 +88,7 @@ exports.emit = (req, res) => {
     if (hasBadge) return res.json({ status: 'success', data: 'BAGDE_OWNED' })
 
     const issuedOn = moment().unix()
+    const licence = `ANG-${shortid.generate()}`
     api.req({
       method: 'POST',
       url: `/badge/:clientId/${badgeId}`,
@@ -104,11 +106,11 @@ exports.emit = (req, res) => {
       }
     }, (error, response, body) => {
       if (error || response.statusCode !== 201) return res.json({ status: 'error', data: body.error })
-
+      
       mongo.get('wallet').findOneAndUpdate(
         { userId },
         {
-          $push: { badges: { id: badgeId, issuedOn } },
+          $push: { badges: { id: badgeId, issuedOn, licence } },
           $set: { lastModified: new Date() }
         },
         { upsert: true },
