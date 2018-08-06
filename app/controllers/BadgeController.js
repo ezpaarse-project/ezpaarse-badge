@@ -89,7 +89,7 @@ exports.emit = (req, res) => {
     if (hasBadge) return res.json({ status: 'success', data: 'BAGDE_OWNED' })
 
     const issuedOn = moment().unix()
-    const licence = `ANG-${shortid.generate()}`
+    const licence = `${process.env.BADGE_AUTHORITY || 'ANG'}-${shortid.generate()}`
     api.req({
       method: 'POST',
       url: `/badge/:clientId/${badgeId}`,
