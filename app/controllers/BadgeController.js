@@ -24,6 +24,7 @@ exports.badges = (req, res) => {
           for (let j = 0; j < badges.length; j++) {
             if (result.badges[i].id === badges[j].id) {
               badges[j].issued_on = result.badges[i].issuedOn
+              badges[j].licence = result.badges[i].licence
             }
           }
         }
@@ -106,7 +107,7 @@ exports.emit = (req, res) => {
       }
     }, (error, response, body) => {
       if (error || response.statusCode !== 201) return res.json({ status: 'error', data: body.error })
-      
+
       mongo.get('wallet').findOneAndUpdate(
         { userId },
         {
