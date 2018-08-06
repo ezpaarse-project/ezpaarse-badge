@@ -15,5 +15,6 @@
     "host": "mongodb",
     "port": "27017",
     "db": "opbadges"
-  }
+  },
+  "authoriy": "ANG"
 }

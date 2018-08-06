@@ -32,6 +32,7 @@ $ docker-compose up
   + host : Database host
   + port : Database port
   + db : Database name
++ authoriy : Authority name used to set licence in a badge
 
 ## API routes
 <table>

@@ -8,5 +8,6 @@
     "host": "BADGE_MONGO_HOST",
     "port": "BADGE_MONGO_PORT",
     "db": "BADGE_MONGO_DB"
-  }
+  },
+  "authority": "BADGE_AUTHORITY"
 }
