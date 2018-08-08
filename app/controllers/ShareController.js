@@ -30,7 +30,7 @@ function render (req, res, view) {
       u: req.query.u,
       b: req.query.b,
       l: (!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l,
-      url: req.get('X-Forwarded-For')
+      url: req.get('angHost')
     }
 
     const style = {
