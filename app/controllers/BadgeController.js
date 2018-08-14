@@ -86,7 +86,7 @@ exports.emit = (req, res) => {
 
     const hasBadge = result && result.badges && result.badges.some(badge => badge.id === badgeId)
 
-    if (hasBadge) return res.json({ status: 'success', data: 'BAGDE_OWNED' })
+    if (hasBadge) return res.json({ status: 'success', data: 'BADGE_OWNED' })
 
     const issuedOn = moment().unix()
     const licence = `${cfg.BADGE_AUTHORITY || 'ANG'}-${shortid.generate()}`.toUpperCase()
