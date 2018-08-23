@@ -28,7 +28,7 @@
       <h4>{{badge.name}}</h4>
       <p class="issuedOn">{{t.issuedOn}} : {{badge.issuedOn}}</p>
 
-      <p><a href="/view?u={{link.u}}&b={{link.b}}&l={{link.l}}" target="_blank">{{t.seeMore}}</a></p> 
+      <p><a href="{{link.url}}/api/badges/view/{{link.u}}/{{link.b}}/{{link.l}}" target="_blank">{{t.seeMore}}</a></p> 
       <a href="http://analyses.ezpaarse.org/" target="_blank">
         <img src="data:image/png;base64,{{style.img.ang}}" alt="AnalogIST" class="angLogo"> 
       </a>  
