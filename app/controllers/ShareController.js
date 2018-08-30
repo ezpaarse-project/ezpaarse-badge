@@ -3,6 +3,7 @@ const fs = require('fs')
 const moment = require('moment')
 const api = require('../lib/api')
 const mongo = require('../lib/mongo')
+const request = require('request')
 
 exports.embed = (req, res) => {
   render(req, res, 'embed')
@@ -13,7 +14,7 @@ exports.view = (req, res) => {
 }
 
 function render (req, res, view) {
-  api.req({ method: 'GET', url: `/badge/_/${req.query.b}.json?v=2.0` }, (error, response, body) => {
+  api.req({ method: 'GET', url: `/badge/_/${req.query.b}.json?v=2.0` }, async (error, response, body) => {
     if (error) return res.json({ status: 'error', data: 'BADGE_NOT_FOUND' })
 
     const data = JSON.parse(body)
@@ -41,6 +42,12 @@ function render (req, res, view) {
       }
     }
 
+    const tmpUser = await getTrelloMember(req.query.u)
+    const user = {
+      name: tmpUser.fullName,
+      avatar: tmpUser.avatarUrl ? `<img src="${tmpUser.avatarUrl}/50.png">` : `<span class="initials">${tmpUser.initials}</span>`
+    }
+
     mongo.get('wallet').findOne({ userId: req.query.u, 'badges.id': req.query.b }, { 'badges.$': 1 }, (err, result) => {
       if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
 
@@ -56,7 +63,24 @@ function render (req, res, view) {
           badge.issuedOn = moment.unix(result.badges[0].issuedOn).format('DD/MM/YYYY')
         }
       }
-      res.render(`${view}`, { badge, t, link, style })
+      res.render(`${view}`, { badge, t, link, style, user })
+    })
+  })
+}
+
+function getTrelloMember (userId) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      method: 'GET',
+      url: `https://api.trello.com/1/members/${userId}`,
+      headers: {
+        'User-Agent': 'ezpaarse-badge'
+      }
+    }
+    request(options, (error, responce, body) => {
+      if (error) reject(error)
+
+      resolve(JSON.parse(body))
     })
   })
 }

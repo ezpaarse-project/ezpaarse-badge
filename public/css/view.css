@@ -49,6 +49,24 @@ body {
   margin: 10px 0;
 }
 
+.container .badge .badgeInfos .recipient img {
+  width: 36px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.container .badge .badgeInfos .recipient .initials {
+  height: 36px;
+  width: 36px;
+  background-color: #e2e4e6;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 36px;
+  font-size: 14px;
+}
+
 .container .footer {
   width: inherit;
   height: auto;

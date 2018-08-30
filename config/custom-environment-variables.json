@@ -9,5 +9,6 @@
     "port": "BADGE_MONGO_PORT",
     "db": "BADGE_MONGO_DB"
   },
-  "authority": "BADGE_AUTHORITY"
+  "authority": "BADGE_AUTHORITY",
+  "trelloApiKey": "TRELLO_API_KEY"
 }
