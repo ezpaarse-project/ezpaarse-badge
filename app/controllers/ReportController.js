@@ -1,4 +1,6 @@
 const api = require('../lib/api')
+const mongo = require('../lib/mongo')
+const cfg = require('config')
 
 exports.metrics = (req, res) => {
   api.req({ method: 'GET', url: `/badge/:clientId` }, async (error, response, body) => {
@@ -10,38 +12,52 @@ exports.metrics = (req, res) => {
     for (let i = 0; i < badges.length; i++) {
       const badge = JSON.parse(badges[i])
 
-      const issues = await getBadge(badge.id).then((b) => {
-        if (b == null) {
-          return 0
-        } else {
-          const badgeEvents = b.trim().split('\r\n')
+      const issuesOBF = await getBadgeInObf(badge.id).then((b) => {
+        if (b == null) return 0
 
-          let count = 0
-          for (let i = 0; i < badgeEvents.length; i++) {
-            count = (count + JSON.parse(badgeEvents[i]).recipient.length)
-          }
+        const badgeEvents = b.trim().split('\r\n')
 
-          return count
-        }
+        let count = 0
+        badgeEvents.forEach(event => {
+          count = (count + ((JSON.parse(event).log_entry.issuer === cfg.logEntry.issuer) ? JSON.parse(event).recipient.length : 0))
+        })
+        return count
       })
 
-      metrics[i] = { id: badge.id, name: badge.name, issues, descr: badge.description, img: badge.image }
+      metrics[i] = {
+        badge: {
+          id: badge.id,
+          name: badge.name,
+          descr: badge.description,
+          img: badge.image
+        },
+        issues: {
+          obf: issuesOBF,
+          app: await getBadgeInDatabase(badge.id).then(b => b)
+        }
+      }
     }
 
-    const issues = metrics.reduce((acc, m) => {
-      return (((acc.issues !== undefined) ? parseInt(acc.issues) : acc) + parseInt(m.issues))
-    })
-
-    res.json(({ status: 'success', data: { metrics, issues } }))
+    res.json(({ status: 'success', data: { metrics } }))
   })
 }
 
-function getBadge (badgeId) {
+function getBadgeInObf (badgeId) {
   return new Promise((resolve, reject) => {
     api.req({ method: 'GET', url: `/event/:clientId?badge_id=${badgeId}` }, (error, response, body) => {
       if (error) return reject(error)
 
       resolve((body.length > 0) ? body : null)
+    })
+  })
+}
+
+function getBadgeInDatabase (badgeId) {
+  return new Promise((resolve, reject) => {
+    mongo.get('wallet').count({ 'badges.id': badgeId }, (err, result) => {
+      if (err) reject(err)
+
+      resolve(result)
     })
   })
 }
