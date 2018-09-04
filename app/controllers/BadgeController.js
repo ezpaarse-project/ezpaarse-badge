@@ -31,11 +31,11 @@ exports.badges = (req, res) => {
       }
 
       for (let i = 0; i < badges.length; i++) {
-        const badeInfos = await getBagdeInfos(badges[i].id).then(badeInfos => {
-          return badeInfos
+        const badgeInfos = await getBagdeInfos(badges[i].id).then(badgeInfos => {
+          return badgeInfos
         })
-        badges[i].alt_language = badeInfos.alt_language
-        badges[i].criteria = badeInfos.criteria
+        badges[i].alt_language = badgeInfos.alt_language
+        badges[i].criteria = badgeInfos.criteria
       }
 
       res.json({ status: 'success', data: badges })

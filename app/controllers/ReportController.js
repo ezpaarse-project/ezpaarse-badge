@@ -29,7 +29,10 @@ exports.metrics = (req, res) => {
           id: badge.id,
           name: badge.name,
           descr: badge.description,
-          img: badge.image
+          img: badge.image,
+          alt_language: await getBagdeInfos(badge.id).then((badgeInfos) => {
+            return badgeInfos.alt_language
+          })
         },
         issues: {
           obf: issuesOBF,
@@ -58,6 +61,16 @@ function getBadgeInDatabase (badgeId) {
       if (err) reject(err)
 
       resolve(result)
+    })
+  })
+}
+
+function getBagdeInfos (badgeId) {
+  return new Promise((resolve, reject) => {
+    api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` }, (error, response, body) => {
+      if (error) return reject(error)
+
+      resolve((body.length > 0) ? JSON.parse(body) : null)
     })
   })
 }
