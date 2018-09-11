@@ -9,6 +9,8 @@ exports.metrics = (req, res) => {
     const badges = body.trim().split('\r\n')
     const metrics = []
 
+    const contributors = await getContributors()
+
     for (let i = 0; i < badges.length; i++) {
       const badge = JSON.parse(badges[i])
 
@@ -41,7 +43,7 @@ exports.metrics = (req, res) => {
       }
     }
 
-    res.json(({ status: 'success', data: { metrics } }))
+    res.json(({ status: 'success', data: { metrics, contributors } }))
   })
 }
 
@@ -58,6 +60,16 @@ function getBadgeInObf (badgeId) {
 function getBadgeInDatabase (badgeId) {
   return new Promise((resolve, reject) => {
     mongo.get('wallet').count({ 'badges.id': badgeId }, (err, result) => {
+      if (err) reject(err)
+
+      resolve(result)
+    })
+  })
+}
+
+function getContributors () {
+  return new Promise((resolve, reject) => {
+    mongo.get('wallet').count({}, (err, result) => {
       if (err) reject(err)
 
       resolve(result)
