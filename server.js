@@ -66,6 +66,8 @@ app.get('/ping', AppController.ping)
 
 app.get('/badges', BadgeController.badges)
 app.post('/emit', BadgeController.emit)
+app.get('/users', BadgeController.users)
+app.put('/visibility', BadgeController.visibility)
 
 app.get('/metrics', ReportController.metrics)
 
