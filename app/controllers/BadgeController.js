@@ -38,7 +38,7 @@ exports.badges = (req, res) => {
         badges[i].criteria = badgeInfos.criteria
       }
 
-      const visibility = result.visibility || false
+      const visibility = !!(result && result.visibility)
 
       res.json({ status: 'success', data: { badges, visibility } })
     })
