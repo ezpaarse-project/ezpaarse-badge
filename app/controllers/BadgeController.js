@@ -38,7 +38,9 @@ exports.badges = (req, res) => {
         badges[i].criteria = badgeInfos.criteria
       }
 
-      res.json({ status: 'success', data: badges })
+      const visibility = result.visibility || false
+
+      res.json({ status: 'success', data: { badges, visibility } })
     })
   })
 }
@@ -123,4 +125,32 @@ exports.emit = (req, res) => {
       )
     })
   })
+}
+
+exports.users = (req, res) => {
+  mongo.get('wallet').find({ visibility: true, 'badges.id': req.query.id }).toArray((err, result) => {
+    if (err || !result) return res.json({ status: 'error', data: 'NO_USERS' })
+
+    const users = []
+    for (let i = 0; i < result.length; i++) {
+      users.push(result[i].userId)
+    }
+
+    res.json({ status: 'success', data: users })
+  })
+}
+
+exports.visibility = (req, res) => {
+  mongo.get('wallet').findOneAndUpdate(
+    { userId: req.body.userId },
+    {
+      $set: { visibility: req.body.visibility, lastModified: new Date() }
+    },
+    { upsert: true },
+    (err, result) => {
+      if (err) return res.status(500).json({ status: 'error' })
+
+      res.json({ status: 'success', data: 'VISIBILITY_SET' })
+    }
+  )
 }
