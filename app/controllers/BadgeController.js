@@ -133,7 +133,10 @@ exports.users = (req, res) => {
 
     const users = []
     for (let i = 0; i < result.length; i++) {
-      users.push(result[i].userId)
+      const badge = result[i].badges.find(b => {
+        return b.id === req.query.id
+      })
+      users.push({ userId: result[i].userId, issuedOn: badge.issuedOn })
     }
 
     res.json({ status: 'success', data: users })
