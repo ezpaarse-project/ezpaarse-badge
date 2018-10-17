@@ -1,14 +1,37 @@
-const api = require('../lib/api')
-const moment = require('moment')
-const cfg = require('config')
+const api     = require('../lib/api')
+const moment  = require('moment')
+const cfg     = require('config')
 const shortid = require('shortid')
-const mongo = require('../lib/mongo')
+const mongo   = require('../lib/mongo')
+const cache   = require('../lib/cache')
 
 exports.badges = (req, res) => {
-  api.req({ method: 'GET', url: `/badge/:clientId` }, (error, response, body) => {
-    if (error || response.statusCode !== 200 || !body) return res.json({ status: 'error', data: 'NO_BADGES' })
+  mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
+    if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
 
-    const badges = body.trim().split('\r\n').map(badge => {
+    const badges = cache.getCache().badges
+
+    if (result && result.badges) {
+      for (let i = 0; i < result.badges.length; i++) {
+        for (let j = 0; j < badges.length; j++) {
+          if (result.badges[i].id === badges[j].id) {
+            badges[j].issued_on = result.badges[i].issuedOn
+            badges[j].licence = result.badges[i].licence
+          }
+        }
+      }
+    }
+
+    const data = { badges }
+    if (!result.visibility) data.visibility = result.visibility
+
+    res.json({ status: 'success', data })
+  })
+}
+
+exports.getBadges = (callback) => {
+  api.req({ method: 'GET', url: `/badge/:clientId` }).then(async (res) => {
+    const badges = res.body.trim().split('\r\n').map(badge => {
       try {
         return JSON.parse(badge)
       } catch (e) {
@@ -16,50 +39,35 @@ exports.badges = (req, res) => {
       }
     }).filter(badge => badge)
 
-    mongo.get('wallet').findOne({ userId: req.query.id }, async (err, result) => {
-      if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
-
-      if (result && result.badges) {
-        for (let i = 0; i < result.badges.length; i++) {
-          for (let j = 0; j < badges.length; j++) {
-            if (result.badges[i].id === badges[j].id) {
-              badges[j].issued_on = result.badges[i].issuedOn
-              badges[j].licence = result.badges[i].licence
-            }
-          }
-        }
-      }
-
-      for (let i = 0; i < badges.length; i++) {
-        const badgeInfos = await getBagdeInfos(badges[i].id).then(badgeInfos => {
-          return badgeInfos
-        })
+    for (let i = 0; i < badges.length; i++) {
+      const badgeInfos = await getBagdeInfos(badges[i].id).then(res => {
+        return JSON.parse(res.body)
+      }).catch((error) => {
+        return error
+      })
+      if (badgeInfos) {
         badges[i].alt_language = badgeInfos.alt_language
         badges[i].criteria = badgeInfos.criteria
       }
+    }
 
-      const visibility = !!(result && result.visibility)
+    cache.setCache({ badges })
 
-      res.json({ status: 'success', data: { badges, visibility } })
-    })
+    return callback()
+  }).catch((error) => {
+    return callback(error)
   })
 }
 
 function getBagdeInfos (badgeId) {
-  return new Promise((resolve, reject) => {
-    api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` }, (error, response, body) => {
-      if (error) return reject(error)
-
-      resolve((body.length > 0) ? JSON.parse(body) : null)
-    })
-  })
+  return api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` })
 }
 
 exports.emit = (req, res) => {
-  const badgeId = req.body.badgeId
-  const userId = req.body.recipient.id
-  const email = req.body.recipient.email
-  const name = req.body.recipient.name
+  const badgeId = req.body.badgeId.trim()
+  const userId = req.body.recipient.id.trim()
+  const email = req.body.recipient.email.trim()
+  const name = req.body.recipient.name.trim()
 
   const errors = []
   if (!badgeId) {
@@ -107,9 +115,7 @@ exports.emit = (req, res) => {
           issuer: cfg.logEntry.issuer
         }
       }
-    }, (error, response, body) => {
-      if (error || response.statusCode !== 201) return res.json({ status: 'error', data: body.error })
-
+    }).then((re) => {
       mongo.get('wallet').findOneAndUpdate(
         { userId },
         {
@@ -123,6 +129,8 @@ exports.emit = (req, res) => {
           res.json({ status: 'success', data: 'BADGE_EMITTED' })
         }
       )
+    }).catch((error) => {
+      return res.json({ status: 'error', data: error })
     })
   })
 }

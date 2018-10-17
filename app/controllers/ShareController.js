@@ -1,70 +1,75 @@
-const path = require('path')
-const fs = require('fs')
-const moment = require('moment')
-const api = require('../lib/api')
-const mongo = require('../lib/mongo')
+const path    = require('path')
+const fs      = require('fs')
+const moment  = require('moment')
+const mongo   = require('../lib/mongo')
 const request = require('request')
+const cache   = require('../lib/cache')
 
-exports.embed = (req, res) => {
-  render(req, res, 'embed')
+exports.embed = async (req, res) => {
+  await render(req, res, 'embed')
 }
 
-exports.view = (req, res) => {
-  render(req, res, 'view')
+exports.view = async (req, res) => {
+  await render(req, res, 'view')
 }
 
-function render (req, res, view) {
-  api.req({ method: 'GET', url: `/badge/_/${req.query.b}.json?v=2.0` }, async (error, response, body) => {
-    if (error) return res.json({ status: 'error', data: 'BADGE_NOT_FOUND' })
+async function render (req, res, view) {
+  const badges = cache.getCache().badges
 
-    const data = JSON.parse(body)
-    const badge = {
-      id: req.query.b,
-      name: (req.query.l === 'fr' || !req.query.l) ? data.name : (data.alt_language[req.query.l] ? data.alt_language[req.query.l].name : data.name),
-      img: data.image,
-      issuedOn: 'N/A',
-      description: (req.query.l === 'fr' || !req.query.l) ? data.description : (data.alt_language[req.query.l] ? data.alt_language[req.query.l].description : data.description),
-      criteria: (req.query.l === 'fr' || !req.query.l) ? data.criteria : (data.alt_language[req.query.l] ? data.alt_language[req.query.l].criteria : data.criteria)
+  const tmpBadge = badges.find((badge) => {
+    return badge.id === req.query.b
+  })
+  const badge = Object.create(tmpBadge)
+  if (badge) badge.issuedOn = 0
+
+  const link = {
+    u: req.query.u,
+    b: req.query.b,
+    l: (!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l,
+    url: req.get('angHost')
+  }
+
+  badge.name = (req.query.l === 'fr' || !req.query.l) ? badge.name : (badge.alt_language[req.query.l] ? badge.alt_language[req.query.l].name : badge.name)
+  badge.description = (req.query.l === 'fr' || !req.query.l) ? badge.description : (badge.alt_language[req.query.l] ? badge.alt_language[req.query.l].description : badge.description)
+  badge.criteria = (req.query.l === 'fr' || !req.query.l) ? badge.criteria : (badge.alt_language[req.query.l] ? badge.alt_language[req.query.l].criteria : badge.criteria)
+
+  const style = {
+    css: fs.readFileSync(path.resolve(`public/css/${view}.css`), 'utf-8'),
+    img: {
+      ang: fs.readFileSync(path.resolve('public/img/ang.png'), 'base64'),
+      obf: fs.readFileSync(path.resolve('public/img/obf.png'), 'base64')
     }
+  }
 
-    const link = {
-      u: req.query.u,
-      b: req.query.b,
-      l: (!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l,
-      url: req.get('angHost')
+  const user = await getTrelloMember(req.query.u).then((result) => {
+    const tmp = JSON.parse(result.body)
+    return {
+      name: tmp.fullName,
+      avatar: tmp.avatarUrl ? `<img src="${tmp.avatarUrl}/50.png">` : `<span class="initials">${tmp.initials}</span>`
     }
+  }).catch((error) => {
+    return error || {
+      name: 'N/C',
+      avatar: `<span class="initials">N/C</span>`
+    }
+  })
 
-    const style = {
-      css: fs.readFileSync(path.resolve(`public/css/${view}.css`), 'utf-8'),
-      img: {
-        ang: fs.readFileSync(path.resolve('public/img/ang.png'), 'base64'),
-        obf: fs.readFileSync(path.resolve('public/img/obf.png'), 'base64')
+  mongo.get('wallet').findOne({ userId: req.query.u, 'badges.id': req.query.b }, { 'badges.$': 1 }, (err, result) => {
+    if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
+
+    let t = null
+    try {
+      if (result) {
+        badge.issuedOn = moment.unix(result.badges[0].issuedOn).format((!req.query.l || req.query.l === 'fr') ? 'DD/MM/YYYY' : 'YYYY-MM-DD')
+      }
+      t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${(!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l}.json`), 'utf-8'))
+    } catch (err) {
+      t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/fr.json`), 'utf-8'))
+      if (result) {
+        badge.issuedOn = moment.unix(result.badges[0].issuedOn).format('DD/MM/YYYY')
       }
     }
-
-    const tmpUser = await getTrelloMember(req.query.u)
-    const user = {
-      name: tmpUser.fullName,
-      avatar: tmpUser.avatarUrl ? `<img src="${tmpUser.avatarUrl}/50.png">` : `<span class="initials">${tmpUser.initials}</span>`
-    }
-
-    mongo.get('wallet').findOne({ userId: req.query.u, 'badges.id': req.query.b }, { 'badges.$': 1 }, (err, result) => {
-      if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
-
-      let t = null
-      try {
-        if (result) {
-          badge.issuedOn = moment.unix(result.badges[0].issuedOn).format((!req.query.l || req.query.l === 'fr') ? 'DD/MM/YYYY' : 'YYYY-MM-DD')
-        }
-        t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${(!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l}.json`), 'utf-8'))
-      } catch (err) {
-        t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/fr.json`), 'utf-8'))
-        if (result) {
-          badge.issuedOn = moment.unix(result.badges[0].issuedOn).format('DD/MM/YYYY')
-        }
-      }
-      res.render(`${view}`, { badge, t, link, style, user })
-    })
+    return res.render(`${view}`, { badge, t, link, style, user })
   })
 }
 
@@ -78,9 +83,9 @@ function getTrelloMember (userId) {
       }
     }
     request(options, (error, responce, body) => {
-      if (error) reject(error)
+      if (error) return reject(error)
 
-      resolve(JSON.parse(body))
+      return resolve({ responce, body })
     })
   })
 }

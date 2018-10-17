@@ -1,9 +1,10 @@
-const express = require('express')
-const app = express()
-const cfg = require('config')
-const bodyParser = require('body-parser')
-const mongo = require('./app/lib/mongo')
-const fs = require('fs')
+const express     = require('express')
+const app         = express()
+const cfg         = require('config')
+const bodyParser  = require('body-parser')
+const mongo       = require('./app/lib/mongo')
+const fs          = require('fs')
+const cache       = require('./app//lib/cache')
 
 process.env.PORT = cfg.port
 
@@ -21,7 +22,7 @@ app.engine('html', (filePath, options, callback) => {
       .replace(new RegExp('{{badge.issuedOn}}', 'g'), options.badge.issuedOn)
       .replace(new RegExp('{{badge.description}}', 'g'), options.badge.description)
       .replace(new RegExp('{{badge.criteria}}', 'g'), options.badge.criteria)
-      .replace(new RegExp('{{badge.img}}', 'g'), options.badge.img)
+      .replace(new RegExp('{{badge.image}}', 'g'), options.badge.image)
       .replace(new RegExp('{{user.name}}', 'g'), options.user.name)
       .replace(new RegExp('{{user.avatar}}', 'g'), options.user.avatar)
       .replace(new RegExp('{{t.issuedOn}}', 'g'), options.t.issuedOn)
@@ -81,7 +82,17 @@ mongo.connect(mongoUrl, (err) => {
     process.exit(1)
   }
 
-  app.listen(port, host)
-  // eslint-disable-next-line
-  console.log(`Listening on http://${host}:${port}`)
+  BadgeController.getBadges((err) => {
+    if (err) return
+
+    app.listen(port, host)
+    // eslint-disable-next-line
+    console.log(`Listening on http://${host}:${port}`)
+
+    setTimeout(() => {
+      if (!cache.isValid()) {
+        BadgeController.getBadges()
+      }
+    }, cache.time)
+  })
 })
