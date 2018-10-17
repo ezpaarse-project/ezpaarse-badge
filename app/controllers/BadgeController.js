@@ -23,7 +23,7 @@ exports.badges = (req, res) => {
     }
 
     const data = { badges }
-    if (!result.visibility) data.visibility = result.visibility
+    if (result) data.visibility = !!(result && result.visibility) || result.visibility
 
     res.json({ status: 'success', data })
   })
