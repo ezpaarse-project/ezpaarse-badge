@@ -9,7 +9,8 @@ exports.badges = (req, res) => {
   mongo.get('wallet').findOne({ userId: req.query.id }, (err, result) => {
     if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
 
-    const badges = Object.create(cache.getCache().badges)
+    const cacheBadges = cache.getCache().badges
+    const badges = JSON.parse(JSON.stringify(cacheBadges))
 
     if (result && result.badges) {
       for (let i = 0; i < result.badges.length; i++) {
