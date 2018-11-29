@@ -26,6 +26,7 @@
     "figlet": "^1.2.0",
     "moment": "^2.22.1",
     "mongodb": "^2.2.33",
+    "morgan": "^1.9.1",
     "node-forge": "^0.7.5",
     "request": "^2.85.0",
     "shortid": "^2.2.12"

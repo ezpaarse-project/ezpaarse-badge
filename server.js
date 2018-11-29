@@ -1,14 +1,16 @@
 const express     = require('express')
 const app         = express()
+const morgan      = require('morgan')
 const cfg         = require('config')
 const bodyParser  = require('body-parser')
 const mongo       = require('./app/lib/mongo')
 const fs          = require('fs')
-const cache       = require('./app//lib/cache')
+const cache       = require('./app/lib/cache')
 
 process.env.PORT = cfg.port
 
 app.use(express.static(__dirname))
+app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
