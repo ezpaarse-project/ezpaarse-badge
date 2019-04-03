@@ -16,61 +16,80 @@ exports.view = async (req, res) => {
 async function render (req, res, view) {
   const badges = cache.getCache().badges
 
-  const tmpBadge = badges.find((badge) => {
-    return badge.id === req.query.b
-  })
-  const badge = Object.create(tmpBadge)
-  if (badge) badge.issuedOn = 0
-
-  const link = {
-    u: req.query.u,
-    b: req.query.b,
-    l: (!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l,
-    url: req.get('angHost')
+  const uuid = req.params.uuid
+  const locale = req.params.locale || 'fr'
+  const url = req.get('angHost')
+  const text = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${locale}.json`), 'utf-8'))
+  const styleError = fs.readFileSync(path.resolve(`public/css/error.css`), 'utf-8')
+  const angImage = fs.readFileSync(path.resolve('public/img/ang.png'), 'base64')
+  const error = {
+    locale,
+    url,
+    styleError,
+    error: 404,
+    message: 'error',
+    text,
+    angImage
   }
 
-  badge.name = (req.query.l === 'fr' || !req.query.l) ? badge.name : (badge.alt_language[req.query.l] ? badge.alt_language[req.query.l].name : badge.name)
-  badge.description = (req.query.l === 'fr' || !req.query.l) ? badge.description : (badge.alt_language[req.query.l] ? badge.alt_language[req.query.l].description : badge.description)
-  badge.criteria = (req.query.l === 'fr' || !req.query.l) ? badge.criteria : (badge.alt_language[req.query.l] ? badge.alt_language[req.query.l].criteria : badge.criteria)
-
-  const style = {
-    css: fs.readFileSync(path.resolve(`public/css/${view}.css`), 'utf-8'),
-    img: {
-      ang: fs.readFileSync(path.resolve('public/img/ang.png'), 'base64'),
-      obf: fs.readFileSync(path.resolve('public/img/obf.png'), 'base64')
-    }
+  if (!uuid) {
+    error.message = 'noUUID'
+    return res.status(404).render('error', error)
   }
 
-  const user = await getTrelloMember(req.query.u).then((result) => {
-    const tmp = JSON.parse(result.body)
-    return {
-      name: tmp.fullName,
-      avatar: tmp.avatarUrl ? `<img src="${tmp.avatarUrl}/50.png">` : `<span class="initials">${tmp.initials}</span>`
-    }
-  }).catch((error) => {
-    return error || {
-      name: 'N/C',
-      avatar: `<span class="initials">N/C</span>`
-    }
-  })
+  try {
+    const data = await mongo.get('wallet').findOne({ 'badges.uuid': uuid }, { userId: 1, 'badges.$': 1 })
 
-  mongo.get('wallet').findOne({ userId: req.query.u, 'badges.id': req.query.b }, { 'badges.$': 1 }, (err, result) => {
-    if (err) return res.json({ status: 'error', data: 'NO_BADGES' })
-
-    let t = null
-    try {
-      if (result) {
-        badge.issuedOn = moment.unix(result.badges[0].issuedOn).format((!req.query.l || req.query.l === 'fr') ? 'DD/MM/YYYY' : 'YYYY-MM-DD')
-      }
-      t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${(!req.query.l || req.query.l === 'fr') ? 'fr' : req.query.l}.json`), 'utf-8'))
-    } catch (err) {
-      t = JSON.parse(fs.readFileSync(path.resolve(`app/locales/fr.json`), 'utf-8'))
-      if (result) {
-        badge.issuedOn = moment.unix(result.badges[0].issuedOn).format('DD/MM/YYYY')
-      }
+    if (!data || !data.badges) {
+      error.message = 'noDataFound'
+      return res.status(404).render('error', error)
     }
-    return res.render(`${view}`, { badge, t, link, style, user })
-  })
+
+    const tmpBadge = badges.find(badge => badge.id === data.badges[0].id)
+    let badge = Object.create(tmpBadge)
+
+    if (badge) {
+      if (locale !== 'fr') {
+        const image = badge.image
+        badge = badge.alt_language['en']
+        badge.image = image
+      }
+      badge.issuedOn = moment.unix(data.badges[0].issuedOn).format((locale === 'fr') ? 'DD/MM/YYYY' : 'YYYY-MM-DD')
+
+      const style = {
+        css: fs.readFileSync(path.resolve(`public/css/${view}.css`), 'utf-8'),
+        img: {
+          ang: fs.readFileSync(path.resolve('public/img/ang.png'), 'base64'),
+          obf: fs.readFileSync(path.resolve('public/img/obf.png'), 'base64')
+        }
+      }
+
+      let user = await getTrelloMember(data.userId).then(result => result.body)
+      if (!user) {
+        error.message = 'noUserFound'
+        return res.status(404).render('error', error)
+      }
+      user = JSON.parse(user)
+
+      return res.render(view, {
+        uuid,
+        badge,
+        locale,
+        url,
+        styleError,
+        user: {
+          fullName: user.fullName,
+          avatarUrl: user.avatarUrl,
+          styleError,
+          initials: user.initials
+        },
+        style,
+        text
+      })
+    }
+  } catch (e) {
+    return res.status(404).render('error', error)
+  }
 }
 
 function getTrelloMember (userId) {
