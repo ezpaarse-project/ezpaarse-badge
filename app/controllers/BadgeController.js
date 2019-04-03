@@ -101,6 +101,7 @@ exports.emit = (req, res) => {
 
     const issuedOn = moment().unix()
     const licence = `${cfg.BADGE_AUTHORITY || 'ANG'}-${shortid.generate()}`.toUpperCase()
+    const uuid = shortid.generate().toLowerCase()
     api.req({
       method: 'POST',
       url: `/badge/:clientId/${badgeId}`,
@@ -120,7 +121,7 @@ exports.emit = (req, res) => {
       mongo.get('wallet').findOneAndUpdate(
         { userId },
         {
-          $push: { badges: { id: badgeId, issuedOn, licence } },
+          $push: { badges: { id: badgeId, issuedOn, licence, uuid } },
           $set: { lastModified: new Date() }
         },
         { upsert: true },
