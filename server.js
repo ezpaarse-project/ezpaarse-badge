@@ -1,6 +1,7 @@
 const express     = require('express')
 const app         = express()
 const morgan      = require('morgan')
+const winston     = require('winston')
 const cfg         = require('config')
 const bodyParser  = require('body-parser')
 const mongo       = require('./app/lib/mongo')
@@ -10,13 +11,27 @@ const path        = require('path')
 
 process.env.PORT = cfg.port
 
+const host = process.env.HOST || '0.0.0.0'
+const port = process.env.PORT || 4000
+
 app.use(express.static(__dirname))
+
+winston.addColors({ verbose: 'green', info: 'green', warn: 'yellow', error: 'red' })
+const { format } = winston
+const logger = winston.createLogger({
+  level: 'info',
+  format: format.combine(
+    format.colorize(),
+    format.timestamp(),
+    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+  ),
+  transports: [new (winston.transports.Console)()]
+})
 
 const env = process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 if (env === 'development') {
   app.use(morgan('dev'))
 }
-
 if (env === 'production') {
   app.use(morgan('combined', {
     stream: fs.createWriteStream(path.resolve(__dirname, 'logs/access.log'), { flags: 'a+' })
@@ -25,11 +40,6 @@ if (env === 'production') {
 
 app.set('views', './app/views')
 app.set('view engine', 'ejs')
-
-const host = process.env.HOST || '0.0.0.0'
-const port = process.env.PORT || 4000
-
-const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
@@ -42,21 +52,35 @@ const AppController = require('./app/controllers/AppController')
 const BadgeController = require('./app/controllers/BadgeController')
 const ReportController = require('./app/controllers/ReportController')
 const ShareController = require('./app/controllers/ShareController')
-
 app.get('/', AppController.app)
-
 app.get('/ping', AppController.ping)
-
 app.get('/badges', BadgeController.badges)
 app.post('/emit', bodyParser.urlencoded({ extended: true }), bodyParser.json(), BadgeController.emit)
 app.get('/users', BadgeController.users)
 app.put('/visibility', bodyParser.urlencoded({ extended: true }), bodyParser.json(), BadgeController.visibility)
-
 app.get('/metrics', ReportController.metrics)
-
 app.get('/embed/:uuid/:locale', ShareController.embed)
 app.get('/view/:uuid/:locale', ShareController.view)
 
+const text = JSON.parse(fs.readFileSync(path.resolve(`app/locales/en.json`), 'utf-8'))
+const styleError = fs.readFileSync(path.resolve(`public/css/error.css`), 'utf-8')
+app.use((req, res, next) => {
+  return res.status(404).render('error', {
+    locale: 'en',
+    styleError,
+    error: 404,
+    message: 'pageNotFound',
+    text
+  })
+})
+app.use((err, req, res, next) => {
+  if (err) {
+    logger.error(err.stack)
+  }
+  next()
+})
+
+const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`
 mongo.connect(mongoUrl, (err) => {
   if (err) {
     // eslint-disable-next-line

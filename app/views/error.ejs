@@ -7,17 +7,25 @@
   <title>AnalogIST : <%= error %> - <%= text[message] %></title>
   <meta name="description" content="<%= error %> <%= text[message] %>" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="<%= url %>" />
+  <% if (typeof url != 'undefined') { %>
+    <meta property="og:url" content="<%= url %>" />
+  <% } %>
   <meta property="og:title" content="AnalogIST : <%= error %> - <%= text[message] %>" />
   <meta property="og:description" content="<%= error %> <%= text[message] %>" />
-  <meta property="og:image" content="<%= angImage %>" />
+  <% if (typeof angImage != 'undefined') { %>
+    <meta property="og:image" content="<%= angImage %>" />  
+  <% } %>
   <meta property="og:language" content="<%= locale %>" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@ezpaarse" />
   <meta name="twitter:title" content="AnalogIST : <%= error %> - <%= text[message] %>" />
   <meta name="twitter:description" content="<%= error %> <%= text[message] %>" />
-  <meta name="twitter:image" content="<%= angImage %>" />
-  <meta name="twitter:url" content="<%= url %>" />
+  <% if (typeof angImage != 'undefined') { %>
+    <meta name="twitter:image" content="<%= angImage %>" />  
+  <% } %>
+  <% if (typeof url != 'undefined') { %>
+    <meta name="twitter:url" content="<%= url %>" />
+  <% } %>
   <style><%= styleError %></style>
 </head>
 

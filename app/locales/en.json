@@ -7,5 +7,6 @@
   "errorOccured": "An error was occured",
   "error": "An error occurred while loading the page.",
   "noUUID": "Unable to find the user.",
-  "noDataFound": "No data found."
+  "noDataFound": "No data found.",
+  "pageNotFound": "The requested page is not available."
 }

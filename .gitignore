@@ -18,3 +18,7 @@ data
 
 # Env
 .env
+env.sh
+
+# logs
+logs
