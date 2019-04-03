@@ -12,7 +12,8 @@
     "dev": "./node_modules/.bin/nodemon ./server.js -e js,json",
     "test": "mocha",
     "precommit": "npm run lint",
-    "lint": "eslint --ext .js --ignore-path .gitignore ."
+    "lint": "eslint --ext .js --ignore-path .gitignore .",
+    "postversion": "git push && git push --tags"
   },
   "author": "",
   "license": "ISC",
