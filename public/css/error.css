@@ -1,0 +1,28 @@
+* { margin: 0; padding: 0; }
+
+body {
+  font-family: Helvetica, sans-serif;
+  background: #fafafa;
+  color: #2a3744;
+}
+
+.error-page {
+  margin: 100px 0 40px;
+  text-align: center;
+}
+
+.error-page__header-image {
+  width: 112px;
+}
+
+.error-page__title {
+  font-size: 80px;
+}
+
+.error-page__errorOccured {
+  font-size: 20px;
+}
+
+.error-page__message {
+  font-size: 22px;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="<%= locale %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>AnalogIST : <%= badge.name %></title>
+  <meta name="description" content="<%= badge.description %>" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="<%= url %>/api/badges/embed/<%= uuid %>/<%= locale %>" />
+  <meta property="og:title" content="AnalogIST : <%= badge.name %>" />
+  <meta property="og:description" content="<%= badge.description %>" />
+  <meta property="og:image" content="https://openbadgefactory.com/v1/badge/_/<%= badge.id %>.png" />
+  <meta property="og:language" content="<%= locale %>" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@ezpaarse" />
+  <meta name="twitter:title" content="AnalogIST : <%= badge.name %>" />
+  <meta name="twitter:description" content="<%= badge.description %>" />
+  <meta name="twitter:image" content="https://openbadgefactory.com/v1/badge/_/<%= badge.id %>.png" />
+  <meta name="twitter:url" content="<%= url %>/api/badges/embed/<%= uuid %>/<%= locale %>" />
+  <style><%= style.css %></style>
+<body>
+  
+    <div class="container">
+        <div class="badgeImg">
+        <img src="<%= badge.image %>" alt="Badge">
+        </div>
+        <div class="badgeInfos">
+        <h4><%= badge.name %></h4>
+        <p class="issuedOn"><%= text.issuedOn %> : <%= badge.issuedOn %></p>
+
+        <p><a href="<%= url %>/api/badges/view/<%= uuid %>/<%= locale %>" target="_blank"><%= text.seeMore %></a></p> 
+        <a href="http://analyses.ezpaarse.org/" target="_blank">
+            <img src="data:image/png;base64,<%= style.img.ang %>" alt="AnalogIST" class="angLogo"> 
+        </a>  
+        </div>
+    </div>
+  
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="<%= locale %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>AnalogIST : <%= error %> - <%= text[message] %></title>
+  <meta name="description" content="<%= error %> <%= text[message] %>" />
+  <meta property="og:type" content="website" />
+  <% if (typeof url != 'undefined') { %>
+    <meta property="og:url" content="<%= url %>" />
+  <% } %>
+  <meta property="og:title" content="AnalogIST : <%= error %> - <%= text[message] %>" />
+  <meta property="og:description" content="<%= error %> <%= text[message] %>" />
+  <% if (typeof angImage != 'undefined') { %>
+    <meta property="og:image" content="<%= angImage %>" />  
+  <% } %>
+  <meta property="og:language" content="<%= locale %>" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@ezpaarse" />
+  <meta name="twitter:title" content="AnalogIST : <%= error %> - <%= text[message] %>" />
+  <meta name="twitter:description" content="<%= error %> <%= text[message] %>" />
+  <% if (typeof angImage != 'undefined') { %>
+    <meta name="twitter:image" content="<%= angImage %>" />  
+  <% } %>
+  <% if (typeof url != 'undefined') { %>
+    <meta name="twitter:url" content="<%= url %>" />
+  <% } %>
+  <style><%= styleError %></style>
+</head>
+
+    <div class="error-page">
+        <header class="error-page__header">
+            <p class="error-page__errorOccured nolinks"><%= text.errorOccured %></p>
+            <h1 class="error-page__title nolinks"><%= error %></h1>
+        </header>
+        <p class="error-page__message"><%= text[message] %></p>
+    </div>
+
+</html>

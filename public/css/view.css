@@ -34,8 +34,8 @@ body {
 }
 
 .container .badge .badgeImg img {
-  width: inherit;
-  height: inherit;
+  display: block;
+  margin: 15px auto;
 }
 
 .container .badge .badgeInfos {
@@ -51,6 +51,7 @@ body {
 
 .container .badge .badgeInfos .recipient img {
   width: 36px;
+  height: 36px;
   border-radius: 50%;
   vertical-align: middle;
 }

@@ -5,6 +5,7 @@ ENV NODE_ENV production
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+WORKDIR /usr/src/logs
 
 COPY package.json /usr/src/app/
 RUN npm install && npm cache clean --force
