@@ -18,6 +18,7 @@ exports.badges = (req, res) => {
           if (result.badges[i].id === badges[j].id) {
             badges[j].issued_on = result.badges[i].issuedOn
             badges[j].licence = result.badges[i].licence
+            badges[j].uuid = result.badges[i].uuid
           }
         }
       }
