@@ -18,7 +18,7 @@ async function render (req, res, view) {
 
   const uuid = req.params.uuid
   let locale = req.params.locale || 'fr'
-  if (locale !== 'fr' || locale !== 'en') {
+  if (locale !== 'fr' && locale !== 'en') {
     locale = 'fr'
   }
   const url = req.get('angHost')
