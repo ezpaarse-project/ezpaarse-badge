@@ -17,7 +17,10 @@ async function render (req, res, view) {
   const badges = cache.getCache().badges
 
   const uuid = req.params.uuid
-  const locale = req.params.locale || 'fr'
+  let locale = req.params.locale || 'fr'
+  if (locale !== 'fr' || locale !== 'en') {
+    locale = 'fr'
+  }
   const url = req.get('angHost')
   const text = JSON.parse(fs.readFileSync(path.resolve(`app/locales/${locale}.json`), 'utf-8'))
   const styleError = fs.readFileSync(path.resolve(`public/css/error.css`), 'utf-8')
