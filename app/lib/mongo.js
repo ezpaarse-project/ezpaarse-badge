@@ -1,32 +1,29 @@
-const MongoClient = require('mongodb').MongoClient
-const mongo = {}
+const { MongoClient } = require('mongodb');
+
+const mongo = {};
 
 mongo.connect = (url, callback) => {
-  if (mongo.db) { return callback(null, mongo.db) }
+  if (mongo.db) { return callback(null, mongo.db); }
 
-  MongoClient.connect(url, (err, database) => {
-    if (err) { return callback(err) }
+  return MongoClient.connect(url, (err, database) => {
+    if (err) { return callback(err); }
 
-    mongo.db = database
-    const wallet = database.collection('wallet')
+    mongo.db = database;
+    const wallet = database.collection('wallet');
 
-    wallet.createIndex({ userId: 1 }, { unique: true }, (err) => {
-      return callback(err, database)
-    })
-  })
-}
+    return wallet.createIndex({ userId: 1 }, { unique: true }, error => callback(error, database));
+  });
+};
 
 mongo.disconnect = (callback) => {
-  if (!mongo.db) { return callback(null) }
+  if (!mongo.db) { return callback(null); }
 
-  mongo.db.close((err) => {
-    mongo.db = null
-    callback(err)
-  })
-}
+  return mongo.db.close((err) => {
+    mongo.db = null;
+    callback(err);
+  });
+};
 
-mongo.get = (col) => {
-  return (mongo.db ? mongo.db.collection(col) : null)
-}
+mongo.get = col => (mongo.db ? mongo.db.collection(col) : null);
 
-module.exports = mongo
+module.exports = mongo;
