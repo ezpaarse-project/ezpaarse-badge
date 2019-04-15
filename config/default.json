@@ -16,5 +16,5 @@
     "port": "27017",
     "db": "opbadges"
   },
-  "authoriy": "ANG"
+  "authority": "ANG"
 }

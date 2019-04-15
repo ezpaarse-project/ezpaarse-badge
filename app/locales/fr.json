@@ -7,6 +7,6 @@
   "errorOccured": "Une erreur s'est produite",
   "error": "Une erreur s'est produite pendant le chargement de la page.",
   "noUUID": "Impossible de trouver l'utilisateur.",
-  "noDataFound": "Aucune données trouvées.",
+  "noDataFound": "Aucune donnée trouvée.",
   "pageNotFound": "La page demandée n'est pas disponible."
 }
