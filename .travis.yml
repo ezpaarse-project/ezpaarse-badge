@@ -7,7 +7,7 @@ services:
 before_install:
   - sudo service docker restart
   - sleep 10
-  - docker pull mongo:3.4.4
+  - docker pull mongo
   - docker run -d -p 127.0.0.1:27017:27017 mongo
 before_script:
   - "until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done"
