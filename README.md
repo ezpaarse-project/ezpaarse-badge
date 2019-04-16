@@ -1,4 +1,7 @@
 # ezPAARSE-Badge
+[![Build Status](https://travis-ci.org/ezpaarse-project/ezpaarse-badge.svg?branch=master)](https://travis-ci.org/ezpaarse-project/ezpaarse-badge)
+[![Docker stars](https://img.shields.io/docker/stars/ezpaarseproject/ezpaarse-badge.svg)](https://hub.docker.com/r/ezpaarseproject/ezpaarse-badge/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/ezpaarseproject/ezpaarse-badge.svg)](https://hub.docker.com/r/ezpaarseproject/ezpaarse-badge/)
 
 > Node.js server using [OpenBadgeFactory API](https://openbadgefactory.com/developers/#open-badge-factory-rest-api)
 

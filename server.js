@@ -90,21 +90,6 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-if (!cfg.continuousIntegration) {
-  BadgeController.getBadges((error) => {
-    if (error) {
-      logger.error(error);
-      process.exit(1);
-    }
-
-    setTimeout(() => {
-      if (!cache.isValid()) {
-        BadgeController.getBadges();
-      }
-    }, cache.time);
-  });
-}
-
 const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`;
 mongo.connect(mongoUrl, (err) => {
   if (err) {
@@ -112,8 +97,24 @@ mongo.connect(mongoUrl, (err) => {
     process.exit(1);
   }
 
-  app.listen(port, host);
-  logger.info(`Listening on http://${host}:${port}`);
+  app.listen(port, host, () => {
+    if (!cfg.continuousIntegration) {
+      BadgeController.getBadges((error) => {
+        if (error) {
+          logger.error(error);
+          process.exit(1);
+        }
+
+        setTimeout(() => {
+          if (!cache.isValid()) {
+            BadgeController.getBadges();
+          }
+        }, cache.time);
+      });
+    }
+
+    logger.info(`Listening on http://${host}:${port}`);
+  });
 });
 
 module.exports = app;
