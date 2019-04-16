@@ -1,13 +1,13 @@
 sudo: required
 language: node_js
 node_js:
-  - 10.10
+  - "10.10"
 services:
   - docker
 before_install:
   - sudo service docker restart
   - sleep 10
-  - docker pull mongo
+  - docker pull mongo:3.4.4
   - docker run -d -p 127.0.0.1:27017:27017 mongo
 before_script:
   - "until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done"
