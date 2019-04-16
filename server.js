@@ -90,21 +90,12 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`;
-mongo.connect(mongoUrl, (err) => {
-  if (err) {
-    logger.error(err);
-    process.exit(1);
-  }
-
+if (!cfg.continuousIntegration) {
   BadgeController.getBadges((error) => {
     if (error) {
       logger.error(error);
       process.exit(1);
     }
-
-    app.listen(port, host);
-    logger.info(`Listening on http://${host}:${port}`);
 
     setTimeout(() => {
       if (!cache.isValid()) {
@@ -112,6 +103,17 @@ mongo.connect(mongoUrl, (err) => {
       }
     }, cache.time);
   });
+}
+
+const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`;
+mongo.connect(mongoUrl, (err) => {
+  if (err) {
+    logger.error(err);
+    process.exit(1);
+  }
+
+  app.listen(port, host);
+  logger.info(`Listening on http://${host}:${port}`);
 });
 
 module.exports = app;

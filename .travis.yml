@@ -1,22 +1,17 @@
 sudo: required
-
 language: node_js
-
 node_js:
-  - 10.10.0
-
-cache:
-  directories:
-    - node_modules
-
+  - 10.10
+services:
+  - docker
 before_install:
-  - npm prune
-
-before_scipt:
-  - export PORT=4000
-
-script: make test
-
+  - sudo service docker restart
+  - sleep 10
+  - docker pull mongo
+  - docker run -d -p 127.0.0.1:27017:27017 mongo
+before_script:
+  - "until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done"
 env:
   global:
     - NODE_ENV=production
+    - CONTINUOUS_INTEGRATION=true

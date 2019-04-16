@@ -10,5 +10,7 @@
     "db": "BADGE_MONGO_DB"
   },
   "authority": "BADGE_AUTHORITY",
-  "trelloApiKey": "TRELLO_API_KEY"
+  "trelloApiKey": "TRELLO_API_KEY",
+  "cacheTime": "CACHE_TIME",
+  "continuousIntegration": "CONTINUOUS_INTEGRATION"
 }

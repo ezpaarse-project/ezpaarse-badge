@@ -16,5 +16,7 @@
     "port": "27017",
     "db": "opbadges"
   },
-  "authority": "ANG"
+  "authority": "ANG",
+  "cacheTime": 24,
+  "continuousIntegration": false
 }

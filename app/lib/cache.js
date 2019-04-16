@@ -1,6 +1,8 @@
+const cfg = require('config');
+
 const cache = {};
 
-cache.time = 24 * 60 * 60 * 1000;
+cache.time = (cfg.cacheTime || 24) * 60 * 60 * 1000;
 
 cache.getCache = () => cache.data;
 

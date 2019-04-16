@@ -33,6 +33,8 @@ $ docker-compose up
   + port : Database port
   + db : Database name
 + authority : Authority name used to set licence in a badge
++ cacheTime : Time in hours to regenerate cache from server launch
++ continuousIntegration : Allow to launch the server without the certificates presence
 
 ## API routes
 <table>
