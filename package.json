@@ -29,7 +29,7 @@
     "moment": "^2.22.1",
     "mongodb": "^2.2.33",
     "morgan": "^1.9.1",
-    "node-forge": "^0.7.5",
+    "node-forge": "^0.10.0",
     "request": "^2.85.0",
     "shortid": "^2.2.14",
     "winston": "^3.2.1"
