@@ -1,21 +1,32 @@
 const cfg = require('config');
+const { CronJob } = require('cron');
+const logger = require('./logger');
+const { getBadges } = require('../controllers/badges/badges');
 
-const cache = {};
-
-cache.time = (cfg.cacheTime || 24) * 60 * 60 * 1000;
-
-cache.getCache = () => cache.data;
-
-cache.setCache = (data) => {
-  cache.date = Date.now();
-  cache.data = data;
+const cache = {
+  badges: [],
 };
 
-cache.isValid = () => {
-  const currentDate = Date.now();
-  if (!cache.date) return false;
-  if (currentDate - cache.date >= cache.time) return false;
-  return true;
+async function onTick() {
+  try {
+    cache.badges = await getBadges();
+    logger.info('Cache is updated');
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+const job = new CronJob({
+  cronTime: cfg.cronCache || '0 0 0 * * *',
+  onTick,
+  runOnInit: true,
+});
+
+exports.start = () => {
+  if (!cfg.continuousIntegration) {
+    logger.info(`Cache is running (${cfg.cronCache})`);
+    job.start();
+  }
 };
 
-module.exports = cache;
+exports.get = () => cache;

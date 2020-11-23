@@ -65,6 +65,11 @@ $ docker-compose up
       <td></td>
     </tr>
     <tr>
+      <td>GET /metrics/count</td>
+      <td>Get count of badges</td>
+      <td></td>
+    </tr>
+    <tr>
       <td>GET /badges</td>
       <td>Get user's badges</td>
       <td>Query String

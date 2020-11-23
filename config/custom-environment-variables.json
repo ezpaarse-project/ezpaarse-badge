@@ -11,6 +11,6 @@
   },
   "authority": "BADGE_AUTHORITY",
   "trelloApiKey": "TRELLO_API_KEY",
-  "cacheTime": "CACHE_TIME",
+  "cronCache": "CRON_CACHE",
   "continuousIntegration": "CONTINUOUS_INTEGRATION"
 }

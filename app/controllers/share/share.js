@@ -2,8 +2,8 @@ const path = require('path');
 const fs = require('fs');
 const moment = require('moment');
 const request = require('request');
-const mongo = require('../lib/mongo');
-const cache = require('../lib/cache');
+const mongo = require('../../lib/mongo');
+const cache = require('../../lib/cache');
 
 function getTrelloMember(userId) {
   return new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ function getTrelloMember(userId) {
 }
 
 async function render(req, res, view) {
-  const { badges } = cache.getCache();
+  const { badges } = cache.get();
 
   const { uuid } = req.params;
   let locale = req.params.locale || 'fr';
@@ -87,6 +87,7 @@ async function render(req, res, view) {
   let user = null;
   try {
     user = await getTrelloMember(data.userId).then(result => result.body);
+    user = JSON.parse(user);
   } catch (e) {
     return res.status(404).render('error', error);
   }
@@ -95,7 +96,6 @@ async function render(req, res, view) {
     error.message = 'noUserFound';
     return res.status(404).render('error', error);
   }
-  user = JSON.parse(user);
 
   return res.render(view, {
     uuid,
@@ -114,6 +114,8 @@ async function render(req, res, view) {
   });
 }
 
-exports.embed = (req, res) => render(req, res, 'embed');
+exports.share = (req, res) => {
+  const { type } = req.params;
 
-exports.view = (req, res) => render(req, res, 'view');
+  return render(req, res, type || 'embed');
+};
