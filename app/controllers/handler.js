@@ -1,19 +1,9 @@
 const router = require('express').Router();
-const path = require('path');
-const fs = require('fs-extra');
 const logger = require('../lib/logger');
-const en = require('../locales/en.json');
-
-const styleError = fs.readFileSync(path.resolve('public', 'css', 'error.css'), 'utf-8');
+const error = require('./error');
 
 // eslint-disable-next-line no-unused-vars
-router.use((req, res, next) => res.status(404).render('error', {
-  locale: 'en',
-  styleError,
-  error: 404,
-  message: 'pageNotFound',
-  text: en,
-}));
+router.use((req, res, next) => error(req, res));
 
 router.use((err, req, res, next) => {
   if (err) {
