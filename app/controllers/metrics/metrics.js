@@ -53,5 +53,5 @@ exports.metricsCount = async (req, res) => {
     }
   }
 
-  return res.json(({ status: 'success', data: { count } }));
+  return res.send(`${count}`);
 };
