@@ -30,7 +30,7 @@ router.post('/emit', validator.body(emitSchema), emit);
 
 const visibilitySchema = Joi.object({
   userId: Joi.string().trim().required(),
-  visibility: Joi.string().trim().required(),
+  visibility: Joi.boolean().required(),
 });
 router.put('/visibility', validator.body(visibilitySchema), visibility);
 
