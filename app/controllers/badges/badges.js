@@ -90,12 +90,8 @@ exports.getBadges = () => new Promise(async (resolve, reject) => {
 });
 
 exports.emit = (req, res) => {
-  const {
-    badgeId,
-    userId,
-    email,
-    name,
-  } = req.body;
+  const { badgeId, recipient } = req.body;
+  const { id: userId, email, name } = recipient;
 
   mongo.get('wallet').findOne({ userId }, (err, result) => {
     if (err) {

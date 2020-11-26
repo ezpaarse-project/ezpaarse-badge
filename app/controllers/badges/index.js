@@ -22,9 +22,11 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 const emitSchema = Joi.object({
   badgeId: Joi.string().trim().required(),
-  userId: Joi.string().trim().required(),
-  email: Joi.string().trim().email().required(),
-  name: Joi.string().trim().required(),
+  recipient: Joi.object({
+    id: Joi.string().trim().required(),
+    email: Joi.string().trim().email().required(),
+    name: Joi.string().trim().required(),
+  }),
 });
 router.post('/emit', validator.body(emitSchema), emit);
 
