@@ -10,32 +10,39 @@ exports.badges = (req, res) => {
   const { id } = req.query;
 
   mongo.get('wallet').findOne({ userId: id }, (err, result) => {
-    if (err) {
+    if (err || !result) {
       return res.json({ status: 'error', data: 'NO_BADGES' });
+    }
+    if (!result.badges) {
+      return res.json({ status: 'success', data: 'NO_BADGES' });
     }
 
     const { badges } = cache.get();
 
-    if (result && result.badges) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const userBadges of result.badges) {
-        let badge = badges.find(({ id: badgeId }) => badgeId === userBadges.id);
+    const userBadges = [];
 
-        if (badge) {
-          badge = {
-            ...badge,
-            issued_on: userBadges.issued_on,
-            licence: userBadges.licence,
-            uuid: userBadges.uuid,
-          };
-        }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const badge of badges) {
+      const userBadge = result.badges.find(({ id: badgeId }) => badgeId === badge.id);
+
+      let tmpBadge = badge;
+
+      if (userBadge) {
+        tmpBadge = {
+          ...tmpBadge,
+          issued_on: userBadge.issuedOn,
+          licence: userBadge.licence,
+          uuid: userBadge.uuid,
+        };
       }
+
+      userBadges.push(tmpBadge);
     }
 
-    const data = { badges };
-    if (result) {
-      data.visibility = !!(result && result.visibility) || result.visibility;
-    }
+    const data = {
+      badges: userBadges,
+      visibility: !!result.visibility,
+    };
 
     return res.json({ status: 'success', data });
   });

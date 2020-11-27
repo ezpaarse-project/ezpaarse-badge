@@ -1,8 +1,5 @@
 const winston = require('winston');
 
-winston.addColors({
-  verbose: 'green', info: 'green', warn: 'yellow', error: 'red',
-});
 const { format } = winston;
 module.exports = winston.createLogger({
   level: 'info',

@@ -6,6 +6,7 @@ const path = require('path');
 const mongo = require('./app/lib/mongo');
 const cache = require('./app/lib/cache');
 const logger = require('./app/lib/logger');
+const error = require('./app/controllers/error');
 
 process.env.PORT = cfg.port;
 
@@ -41,7 +42,18 @@ app.use((req, res, next) => {
 
 app.use('/', require('./app/controllers'));
 
-cache.start();
+// eslint-disable-next-line no-unused-vars
+app.use((req, res, next) => error(req, res));
+
+app.use((err, req, res, next) => {
+  if (err && err.error && err.error.isJoi) {
+    return res.status(400).json({
+      type: err.type,
+      message: err.error.toString(),
+    });
+  }
+  return next(err);
+});
 
 const mongoUrl = `mongodb://${cfg.mongo.host}:${cfg.mongo.port}/${cfg.mongo.db}`;
 mongo.connect(mongoUrl, (err) => {
@@ -51,6 +63,7 @@ mongo.connect(mongoUrl, (err) => {
   }
 
   app.listen(port, host, () => {
+    cache.start();
     logger.info(`Listening on http://${host}:${port}`);
   });
 });

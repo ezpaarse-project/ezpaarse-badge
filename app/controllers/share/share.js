@@ -28,7 +28,7 @@ async function render(req, res, view) {
   const { badges } = cache.get();
 
   const { uuid } = req.params;
-  let locale = req.params.locale || 'fr';
+  let { locale } = req.params;
   if (locale !== 'fr' && locale !== 'en') {
     locale = 'fr';
   }

@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const bodyParser = require('body-parser');
 const Joi = require('joi');
-const validator = require('express-joi-validation').createValidator({});
+const validator = require('express-joi-validation').createValidator({
+  passError: true,
+});
 
 const {
   badges,
