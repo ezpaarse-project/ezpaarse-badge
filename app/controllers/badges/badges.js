@@ -10,14 +10,15 @@ exports.badges = (req, res) => {
   const { id } = req.query;
 
   mongo.get('wallet').findOne({ userId: id }, (err, result) => {
-    if (err || !result) {
+    if (err) {
       return res.json({ status: 'error', data: 'NO_BADGES' });
-    }
-    if (!result.badges) {
-      return res.json({ status: 'success', data: 'NO_BADGES' });
     }
 
     const { badges } = cache.get();
+
+    if (!result || !result.badges) {
+      return res.json({ status: 'success', data: { badges } });
+    }
 
     const userBadges = [];
 
