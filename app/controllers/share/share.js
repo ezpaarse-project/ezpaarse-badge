@@ -64,8 +64,8 @@ async function render(req, res, view) {
 
   let user = null;
   try {
-    user = await getTrelloMember(data.userId).then(result => result.body);
-    user = JSON.parse(user);
+    const { body } = await getTrelloMember(data.userId);
+    user = JSON.parse(body);
   } catch (e) {
     return errorHandler(req, res, { message: 'noUserFound' });
   }
