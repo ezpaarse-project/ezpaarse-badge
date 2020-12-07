@@ -20,25 +20,18 @@ exports.badges = (req, res) => {
       return res.json({ status: 'success', data: { badges } });
     }
 
-    const userBadges = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const badge of badges) {
+    const userBadges = badges.map((badge) => {
       const userBadge = result.badges.find(({ id: badgeId }) => badgeId === badge.id);
 
-      let tmpBadge = badge;
+      if (!userBadge) { return badge; }
 
-      if (userBadge) {
-        tmpBadge = {
-          ...tmpBadge,
-          issued_on: userBadge.issuedOn,
-          licence: userBadge.licence,
-          uuid: userBadge.uuid,
-        };
-      }
-
-      userBadges.push(tmpBadge);
-    }
+      return {
+        ...badge,
+        issued_on: userBadge.issuedOn,
+        licence: userBadge.licence,
+        uuid: userBadge.uuid,
+      };
+    });
 
     const data = {
       badges: userBadges,
@@ -49,34 +42,29 @@ exports.badges = (req, res) => {
   });
 };
 
-function getBagdeInfos(badgeId) {
-  return new Promise(async (resolve, reject) => {
-    let result;
-    try {
-      const { body } = await api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` });
-      result = JSON.parse(body);
-    } catch (err) {
-      return reject(err);
-    }
-
-    return resolve(result);
-  });
+async function getBagdeInfos(badgeId) {
+  try {
+    const { body } = await api.req({ method: 'GET', url: `/badge/_/${badgeId}.json?v=2.0` });
+    return Promise.resolve(JSON.parse(body));
+  } catch (err) {
+    return Promise.reject(err);
+  }
 }
 
-exports.getBadges = () => new Promise(async (resolve, reject) => {
+exports.getBadges = async () => {
   let result;
   try {
     result = await api.req({ method: 'GET', url: '/badge/:clientId' });
   } catch (err) {
     logger.error(err);
-    return reject(err);
+    return Promise.reject(err);
   }
 
   if (!result) {
-    return reject(new Error('No result found'));
+    return Promise.reject(new Error('No result found'));
   }
 
-  const badges = result.body.trim().split('\r\n').map((badge) => {
+  const badges = result.body.trim().split('\n').map((badge) => {
     try {
       return JSON.parse(badge);
     } catch (e) {
@@ -94,50 +82,56 @@ exports.getBadges = () => new Promise(async (resolve, reject) => {
     }
   }
 
-  return resolve(badges);
-});
+  return Promise.resolve(badges);
+};
 
-exports.emit = (req, res) => {
+exports.emit = async (req, res) => {
   const { badgeId, recipient } = req.body;
   const { id: userId, email, name } = recipient;
 
-  mongo.get('wallet').findOne({ userId }, async (err, result) => {
-    if (err) {
-      return res.json({ status: 'success', data: 'ERROR' });
-    }
+  let result;
+  try {
+    result = await mongo.get('wallet').findOne({ userId });
+  } catch (error) {
+    return res.json({ status: 'success', data: 'ERROR' });
+  }
 
-    const hasBadge = result && result.badges && result.badges.some(badge => badge.id === badgeId);
+  if (!result) {
+    return res.json({ status: 'success', data: 'ERROR' });
+  }
 
-    if (hasBadge) {
-      return res.json({ status: 'success', data: 'BADGE_OWNED' });
-    }
+  const hasBadge = result && result.badges && result.badges.some(badge => badge.id === badgeId);
+  if (hasBadge) {
+    return res.json({ status: 'success', data: 'BADGE_OWNED' });
+  }
 
-    const issuedOn = moment().unix();
-    const licence = `${cfg.authority || 'ANG'}-${shortid.generate()}`.toUpperCase();
-    const uuid = shortid.generate().toLowerCase();
+  const issuedOn = moment().unix();
+  const licence = `${cfg.authority || 'ANG'}-${shortid.generate()}`.toUpperCase();
+  const uuid = shortid.generate().toLowerCase();
 
-    try {
-      await api.req({
-        method: 'POST',
-        url: `/badge/:clientId/${badgeId}`,
-        data: {
-          recipient: [email],
-          issued_on: issuedOn,
-          email_subject: cfg.email.subject,
-          email_body: cfg.email.body.replace(':recipientName', name),
-          email_link_text: cfg.email.button,
-          email_footer: cfg.email.footer,
-          log_entry: {
-            client: cfg.logEntry.client,
-            issuer: cfg.logEntry.issuer,
-          },
+  try {
+    await api.req({
+      method: 'POST',
+      url: `/badge/:clientId/${badgeId}`,
+      data: {
+        recipient: [email],
+        issued_on: issuedOn,
+        email_subject: cfg.email.subject,
+        email_body: cfg.email.body.replace(':recipientName', name),
+        email_link_text: cfg.email.button,
+        email_footer: cfg.email.footer,
+        log_entry: {
+          client: cfg.logEntry.client,
+          issuer: cfg.logEntry.issuer,
         },
-      });
-    } catch (error) {
-      return res.json({ status: 'error', data: error });
-    }
+      },
+    });
+  } catch (error) {
+    return res.json({ status: 'error', data: error });
+  }
 
-    mongo.get('wallet').findOneAndUpdate(
+  try {
+    await mongo.get('wallet').findOneAndUpdate(
       { userId },
       {
         $push: {
@@ -148,15 +142,12 @@ exports.emit = (req, res) => {
         $set: { lastModified: new Date() },
       },
       { upsert: true },
-      (error) => {
-        if (error) return res.status(500).json({ status: 'error' });
-
-        return res.json({ status: 'success', data: 'BADGE_EMITTED' });
-      },
     );
-
+  } catch (err) {
     return res.status(500).json({ status: 'error' });
-  });
+  }
+
+  return res.json({ status: 'success', data: 'BADGE_EMITTED' });
 };
 
 exports.users = (req, res) => {

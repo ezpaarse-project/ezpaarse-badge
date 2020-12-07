@@ -2,8 +2,20 @@ const mongo = require('../../lib/mongo');
 const cache = require('../../lib/cache');
 const logger = require('../../lib/logger');
 
-function getBadgeInDatabase(badgeId) {
-  return mongo.get('wallet').count({ 'badges.id': badgeId });
+function getBadgeCount() {
+  return mongo.get('wallet').aggregate([
+    {
+      $unwind: '$badges',
+    },
+    {
+      $group: {
+        _id: '$badges.id',
+        sum: {
+          $sum: 1,
+        },
+      },
+    },
+  ]).toArray();
 }
 
 function getContributors() {
@@ -11,8 +23,6 @@ function getContributors() {
 }
 
 exports.metrics = async (req, res) => {
-  const metrics = [];
-
   const { badges } = cache.get();
 
   let contributors = 0;
@@ -22,35 +32,39 @@ exports.metrics = async (req, res) => {
     logger.error(err);
   }
 
-  for (let i = 0; i < badges.length; i += 1) {
-    let app = 0;
-    try {
-      app = await getBadgeInDatabase(badges[i].id);
-    } catch (error) {
-      logger.error(error);
-    }
-
-    metrics[i] = {
-      badge: badges[i],
-      issues: { app },
-    };
+  let aggregationSum = [];
+  try {
+    aggregationSum = await getBadgeCount();
+  } catch (error) {
+    logger.error(error);
   }
+
+  const metrics = badges.map((badge) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const cursor = aggregationSum.find(c => c._id === badge.id);
+    return {
+      badges,
+      issues: {
+        app: cursor ? cursor.sum : 0,
+      },
+    };
+  });
 
   return res.json(({ status: 'success', data: { metrics, contributors } }));
 };
 
 
 exports.metricsCount = async (req, res) => {
-  const { badges } = cache.get();
+  let aggregationSum = [];
+  try {
+    aggregationSum = await getBadgeCount();
+  } catch (error) {
+    logger.error(error);
+  }
 
   let count = 0;
-  for (let i = 0; i < badges.length; i += 1) {
-    try {
-      const result = await getBadgeInDatabase(badges[i].id);
-      count += result;
-    } catch (err) {
-      logger.error(err);
-    }
+  if (aggregationSum.length) {
+    count = aggregationSum.reduce((prev, cur) => prev + cur.sum, 0);
   }
 
   return res.send(`${count}`);

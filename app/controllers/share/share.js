@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const moment = require('moment');
 const request = require('request');
 const mongo = require('../../lib/mongo');
@@ -74,11 +74,32 @@ async function render(req, res, view) {
     return errorHandler(req, res, { message: 'noUserFound' });
   }
 
+  let css;
+  try {
+    css = await fs.readFile(path.resolve('public', 'css', `${view}.css`), 'utf-8');
+  } catch (err) {
+    css = '';
+  }
+
+  let ang;
+  try {
+    ang = await fs.readFile(path.resolve('public', 'img', 'ang.png'), 'base64');
+  } catch (err) {
+    ang = '';
+  }
+
+  let obf;
+  try {
+    obf = await fs.readFile(path.resolve('public', 'img', 'obf.png'), 'base64');
+  } catch (err) {
+    obf = '';
+  }
+
   const style = {
-    css: fs.readFileSync(path.resolve('public', 'css', `${view}.css`), 'utf-8'),
+    css,
     img: {
-      ang: fs.readFileSync(path.resolve('public', 'img', 'ang.png'), 'base64'),
-      obf: fs.readFileSync(path.resolve('public', 'img', 'obf.png'), 'base64'),
+      ang,
+      obf,
     },
   };
 
@@ -101,10 +122,5 @@ async function render(req, res, view) {
 
 exports.share = (req, res) => {
   const { type } = req.params;
-
-  if (type !== 'embed' && type !== 'view') {
-    return errorHandler(req, res);
-  }
-
   return render(req, res, type);
 };
