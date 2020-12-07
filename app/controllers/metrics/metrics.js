@@ -19,7 +19,7 @@ function getBadgeCount() {
 }
 
 function getContributors() {
-  return mongo.get('wallet').count({});
+  return mongo.get('wallet').countDocuments({});
 }
 
 exports.metrics = async (req, res) => {
@@ -43,7 +43,7 @@ exports.metrics = async (req, res) => {
     // eslint-disable-next-line no-underscore-dangle
     const cursor = aggregationSum.find(c => c._id === badge.id);
     return {
-      badges,
+      badge,
       issues: {
         app: cursor ? cursor.sum : 0,
       },
