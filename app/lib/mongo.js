@@ -5,13 +5,16 @@ const mongo = {};
 mongo.connect = (url, callback) => {
   if (mongo.db) { return callback(null, mongo.db); }
 
-  return MongoClient.connect(url, (err, database) => {
+  return MongoClient.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }, (err, client) => {
     if (err) { return callback(err); }
 
-    mongo.db = database;
-    const wallet = database.collection('wallet');
+    mongo.db = client.db();
+    const wallet = mongo.db.collection('wallet');
 
-    return wallet.createIndex({ userId: 1 }, { unique: true }, error => callback(error, database));
+    return wallet.createIndex({ userId: 1 }, { unique: true }, error => callback(error, mongo.db));
   });
 };
 

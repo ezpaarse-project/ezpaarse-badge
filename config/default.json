@@ -17,6 +17,6 @@
     "db": "opbadges"
   },
   "authority": "ANG",
-  "cacheTime": 24,
+  "cronCache": "0 0 0 * * *",
   "continuousIntegration": false
 }

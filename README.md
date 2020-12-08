@@ -65,6 +65,11 @@ $ docker-compose up
       <td></td>
     </tr>
     <tr>
+      <td>GET /metrics/count</td>
+      <td>Get count of badges</td>
+      <td></td>
+    </tr>
+    <tr>
       <td>GET /badges</td>
       <td>Get user's badges</td>
       <td>Query String
@@ -74,7 +79,7 @@ $ docker-compose up
       </td>
     </tr>
     <tr>
-      <td>POST /emit</td>
+      <td>POST /badges/emit</td>
       <td>Emits badge for user</td>
       <td>JSON
         <ul>
@@ -87,6 +92,37 @@ $ docker-compose up
               <li><strong>email</strong>: recipient email</li>
               <li><strong>name</strong>: recipient name</li>
             </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>PUT /badges/visibility</td>
+      <td>Change visibility user</td>
+      <td>JSON
+        <ul>
+          <li>
+            <strong>userId</strong>: ID of user
+          </li>
+          <li>
+            <strong>visibility</strong>: Boolean true/false
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>GET /share/:type/:uuid/:locale</td>
+      <td>Display issued badge's page</td>
+      <td>HTML
+        <ul>
+          <li>
+            <strong>type</strong>: Type of view (embed/view)
+          </li>
+          <li>
+            <strong>uuid</strong>: User ID
+          </li>
+          <li>
+            <strong>locale</strong>: Language en/fr (default: en)
           </li>
         </ul>
       </td>
