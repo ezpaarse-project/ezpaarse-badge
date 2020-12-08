@@ -1,4 +1,4 @@
-FROM node:9.1.0-wheezy
+FROM node:12.18.1
 LABEL maintainer="ezPAARSE Team <ezpaarse@couperin.org>"
 
 ENV NODE_ENV production
